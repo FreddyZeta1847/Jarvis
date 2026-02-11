@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+env/
+ENV/
+
+# Build outputs
+frontend/build/
+frontend/dist/
+*.egg-info/
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Project docs / config not to track
+CLAUDE.md
+EXPLAINED.md
+docker-compose.yml
+nul
+*.png
+
+# Docker
+frontend/Dockerfile
+backend/Dockerfile
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Azure
+.azure/

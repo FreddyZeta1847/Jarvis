@@ -1,0 +1,27 @@
+import os
+from dotenv import load_dotenv
+from pathlib import Path
+
+# Load .env from backend/ folder
+env_path = Path(__file__).parent.parent / ".env"
+load_dotenv(env_path)
+
+# Leggi le variabili - semplice e diretto
+JWT_SECRET = os.getenv("JWT_SECRET", "")
+JWT_ALGORITHM = "HS256"
+JWT_EXPIRE_MINUTES = 60
+PASSWORD_HASH = os.getenv("PASSWORD_HASH", "")
+
+# Azure Speech
+AZURE_SPEECH_KEY = os.getenv("AZURE_SPEECH_KEY", "")
+AZURE_SPEECH_REGION = os.getenv("AZURE_SPEECH_REGION", "")
+
+# Azure OpenAI
+AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT", "")
+AZURE_OPENAI_KEY = os.getenv("AZURE_OPENAI_KEY", "")
+AZURE_OPENAI_DEPLOYMENT = os.getenv("AZURE_OPENAI_DEPLOYMENT", "")
+
+# Cosmos DB (per dopo)
+COSMOS_ENDPOINT = os.getenv("COSMOS_ENDPOINT", "")
+COSMOS_KEY = os.getenv("COSMOS_KEY", "")
+COSMOS_DATABASE = os.getenv("COSMOS_DATABASE", "jarvis")

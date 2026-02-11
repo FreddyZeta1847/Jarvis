@@ -1,0 +1,23 @@
+# ===========================================
+# JARVIS BACKEND - PYTHON DEPENDENCIES
+# ===========================================
+
+# --- WEB FRAMEWORK ---
+fastapi>=0.115.0          # REST API framework - handles routes, requests, auto-generates OpenAPI docs
+uvicorn[standard]>=0.32.0 # ASGI server - runs FastAPI, supports WebSocket and hot-reload
+
+# --- AUTHENTICATION ---
+python-jose[cryptography]>=3.3.0  # JWT tokens - creates and verifies auth tokens
+bcrypt>=4.2.0                     # Password hashing - securely encrypts passwords
+
+# --- UTILITIES ---
+python-dotenv>=1.0.0      # Reads variables from .env file
+pydantic>=2.10.0          # Data validation - ensures incoming data is correct
+pydantic-settings>=2.7.0  # Settings management from environment variables
+websockets>=14.0          # WebSocket client/server - real-time audio communication
+
+# --- HTTP CLIENT ---
+httpx>=0.28.0             # Async HTTP client - calls external APIs (Google, Weather, etc.)
+
+# --- AZURE SPEECH (Phase 2) ---
+azure-cognitiveservices-speech>=1.42.0  # Azure STT/TTS - speech recognition and synthesis

@@ -1,0 +1,49 @@
+.agent-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-primary);
+  border-radius: 20px;
+  font-size: 0.75rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-secondary);
+  transition: background-color 0.2s;
+}
+
+.agent-status.idle .status-dot {
+  background: var(--text-secondary);
+}
+
+.agent-status.listening .status-dot {
+  background: var(--success);
+  animation: blink 1s ease-in-out infinite;
+}
+
+.agent-status.speaking .status-dot {
+  background: var(--warning);
+  animation: blink 0.5s ease-in-out infinite;
+}
+
+.agent-status.active .status-dot {
+  background: var(--accent);
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.status-text {
+  color: var(--text-secondary);
+  text-transform: capitalize;
+}
