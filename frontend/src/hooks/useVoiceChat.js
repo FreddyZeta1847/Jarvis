@@ -33,6 +33,7 @@ export function useVoiceChat() {
     stopSpeaking,
     checkIsSpeaking,
     wasInterrupted,
+    clearInterrupted,
     getAIResponse
   } = useSpeechService();
 
@@ -46,6 +47,9 @@ export function useVoiceChat() {
     setLastTranscription(text);
     setStatus('processing');
 
+    // Reset interrupted flag - this is a new message
+    clearInterrupted();
+
     // Add user message to chat
     addMessage({
       role: 'user',
@@ -57,7 +61,14 @@ export function useVoiceChat() {
 
     // Check if interrupted during processing - don't speak if so
     if (wasInterrupted()) {
-      console.log('Interrupted during processing - skipping response');
+      // Still show the response in chat even if we skip speaking
+      if (response) {
+        addMessage({
+          role: 'assistant',
+          content: response.text,
+          agent: response.agent
+        });
+      }
       setStatus('listening');
       return;
     }
@@ -80,7 +91,7 @@ export function useVoiceChat() {
         setStatus('listening');
       }
     }
-  }, [addMessage, getAIResponse, speak, setActiveAgent, wasInterrupted]);
+  }, [addMessage, getAIResponse, speak, setActiveAgent, wasInterrupted, clearInterrupted]);
 
   /**
    * Handle partial transcription (while speaking)

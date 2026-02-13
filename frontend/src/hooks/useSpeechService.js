@@ -23,6 +23,7 @@ export function useSpeechService() {
   const tokenExpiryRef = useRef(null);
   const isSpeakingRef = useRef(false);  // Ref for interruption check (avoids stale closure)
   const isInterruptedRef = useRef(false);  // Flag to cancel ongoing operations
+  const speakResolveRef = useRef(null);  // Resolve function for speak() promise
 
   // Callbacks
   const onTranscriptionRef = useRef(null);
@@ -176,33 +177,41 @@ export function useSpeechService() {
       const player = new SpeechSDK.SpeakerAudioDestination();
       playerRef.current = player;
 
-      player.onAudioEnd = () => {
-        setIsSpeaking(false);
-        isSpeakingRef.current = false;
-      };
-
       const audioConfig = SpeechSDK.AudioConfig.fromSpeakerOutput(player);
       const synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig, audioConfig);
       synthesizerRef.current = synthesizer;
 
       await new Promise((resolve, reject) => {
+        // Store resolve so stopSpeaking() can unblock this promise
+        speakResolveRef.current = resolve;
+
+        // Resolve when audio PLAYBACK ends, not when synthesis ends
+        player.onAudioEnd = () => {
+          speakResolveRef.current = null;
+          setIsSpeaking(false);
+          isSpeakingRef.current = false;
+          resolve();
+        };
+
         synthesizer.speakTextAsync(
           text,
           (result) => {
             synthesizer.close();
             synthesizerRef.current = null;
-            if (result.reason === SpeechSDK.ResultReason.SynthesizingAudioCompleted) {
-              resolve(result);
-            } else if (result.reason === SpeechSDK.ResultReason.Canceled) {
-              // Interrupted - not an error
-              resolve(result);
-            } else {
+            if (result.reason === SpeechSDK.ResultReason.Canceled) {
+              // Interrupted or canceled - resolve immediately
+              speakResolveRef.current = null;
+              resolve();
+            } else if (result.reason !== SpeechSDK.ResultReason.SynthesizingAudioCompleted) {
+              speakResolveRef.current = null;
               reject(new Error('TTS failed: ' + result.errorDetails));
             }
+            // For SynthesizingAudioCompleted, wait for onAudioEnd to resolve
           },
           (error) => {
             synthesizer.close();
             synthesizerRef.current = null;
+            speakResolveRef.current = null;
             reject(error);
           }
         );
@@ -215,7 +224,8 @@ export function useSpeechService() {
         setError(err.message);
       }
     } finally {
-      if (!isInterruptedRef.current) {
+      // Only clear on error/interruption - normal completion handled by onAudioEnd
+      if (isInterruptedRef.current) {
         setIsSpeaking(false);
         isSpeakingRef.current = false;
       }
@@ -246,6 +256,12 @@ export function useSpeechService() {
       synthesizerRef.current = null;
     }
 
+    // Unblock the speak() promise so the flow can continue
+    if (speakResolveRef.current) {
+      speakResolveRef.current();
+      speakResolveRef.current = null;
+    }
+
     setIsSpeaking(false);
     isSpeakingRef.current = false;
   }, []);
@@ -255,6 +271,13 @@ export function useSpeechService() {
    */
   const wasInterrupted = useCallback(() => {
     return isInterruptedRef.current;
+  }, []);
+
+  /**
+   * Clear interrupted flag (call when starting to process a new message)
+   */
+  const clearInterrupted = useCallback(() => {
+    isInterruptedRef.current = false;
   }, []);
 
   /**
@@ -313,6 +336,7 @@ export function useSpeechService() {
     stopSpeaking,
     checkIsSpeaking,  // Use this for interruption detection (avoids stale state)
     wasInterrupted,   // Check if current operation was interrupted
+    clearInterrupted, // Reset interrupted flag for new messages
     getAIResponse
   };
 }
