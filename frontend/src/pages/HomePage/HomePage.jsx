@@ -5,6 +5,7 @@ import RobotAvatar from '../../components/RobotAvatar/RobotAvatar.jsx';
 import VoiceButton from '../../components/VoiceButton/VoiceButton.jsx';
 import ChatHistory from '../../components/ChatHistory/ChatHistory.jsx';
 import ChatInput from '../../components/ChatInput/ChatInput.jsx';
+import ExpensesPage from '../ExpensesPage/ExpensesPage.jsx';
 import { useVoiceChat } from '../../hooks/useVoiceChat.js';
 import './HomePage.css';
 
@@ -109,15 +110,7 @@ function HomePage() {
           </div>
         )}
 
-        {activeTab === 'expenses' && (
-          <div className="placeholder-page">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="placeholder-icon">
-              <line x1="12" y1="1" x2="12" y2="23" />
-              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
-            <p>Expenses coming soon</p>
-          </div>
-        )}
+        {activeTab === 'expenses' && <ExpensesPage />}
       </main>
 
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />

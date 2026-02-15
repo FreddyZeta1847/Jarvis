@@ -1,0 +1,150 @@
+.expenses-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0 1rem;
+  position: relative;
+}
+
+/* Header */
+.expenses-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 1rem 0.25rem 0.5rem;
+}
+
+.expenses-header-left {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.total-amount {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.total-currency {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.total-count {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+/* Category filter bar */
+.category-filter-bar {
+  flex-shrink: 0;
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.5rem 0 0.65rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-glass-strong) transparent;
+}
+
+.category-filter-bar::-webkit-scrollbar {
+  height: 3px;
+}
+
+.category-filter-bar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.category-filter-bar::-webkit-scrollbar-thumb {
+  background: var(--border-glass-strong);
+  border-radius: 3px;
+}
+
+.filter-pill {
+  flex-shrink: 0;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  border: 1px solid var(--border-glass);
+  background: var(--bg-glass);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.filter-pill.active {
+  background: var(--pill-color, var(--accent));
+  color: white;
+  border-color: transparent;
+}
+
+.filter-pill:not(.active):hover {
+  color: var(--text-primary);
+}
+
+/* Expense list */
+.expenses-list {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.25rem 0 5rem;
+}
+
+.expenses-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* FAB */
+.fab-add {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  border: none;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px var(--accent-glow);
+  transition: transform 0.2s, box-shadow 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 10;
+}
+
+.fab-add:active {
+  transform: scale(0.92);
+}
+
+.fab-add svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .expenses-page {
+    padding: 0 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}

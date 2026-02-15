@@ -27,9 +27,6 @@ docker-compose.yml
 nul
 *.png
 
-# Docker
-frontend/Dockerfile
-backend/Dockerfile
 
 # IDE
 .idea/

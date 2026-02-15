@@ -53,5 +53,41 @@ export const api = {
     const response = await fetchWithAuth('/api/agents/status');
     if (!response.ok) throw new Error('Failed to get agent status');
     return response.json();
-  }
+  },
+
+  async getExpenses({ category, startDate, endDate } = {}) {
+    const params = new URLSearchParams();
+    if (category) params.set('category', category);
+    if (startDate) params.set('start_date', startDate);
+    if (endDate) params.set('end_date', endDate);
+    const qs = params.toString();
+    const response = await fetchWithAuth(`/api/expenses${qs ? `?${qs}` : ''}`);
+    if (!response.ok) throw new Error('Failed to fetch expenses');
+    return response.json();
+  },
+
+  async createExpense(expense) {
+    const response = await fetchWithAuth('/api/expenses', {
+      method: 'POST',
+      body: JSON.stringify(expense),
+    });
+    if (!response.ok) throw new Error('Failed to create expense');
+    return response.json();
+  },
+
+  async updateExpense(id, updates) {
+    const response = await fetchWithAuth(`/api/expenses/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updates),
+    });
+    if (!response.ok) throw new Error('Failed to update expense');
+    return response.json();
+  },
+
+  async deleteExpense(id) {
+    const response = await fetchWithAuth(`/api/expenses/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) throw new Error('Failed to delete expense');
+  },
 };
