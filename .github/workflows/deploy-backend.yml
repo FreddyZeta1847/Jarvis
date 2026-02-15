@@ -20,12 +20,16 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install dependencies into package
         working-directory: backend
-        run: pip install -r requirements.txt
+        run: |
+          python -m venv antenv
+          source antenv/bin/activate
+          pip install -r requirements.txt
 
       - name: Create deployment package
-        run: cd backend && zip -r ../deploy.zip .
+        working-directory: backend
+        run: zip -r ../deploy.zip . -x "venv/*" "*.pyc" "__pycache__/*" ".env"
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
