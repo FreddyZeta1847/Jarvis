@@ -5,22 +5,16 @@ gunicorn>=22.0.0
 
 # Authentication
 python-jose[cryptography]>=3.3.0
-passlib[bcrypt]>=1.7.4
+bcrypt>=4.2.0
 
 # Azure Services
-azure-cognitiveservices-speech>=1.42.0
 azure-cosmos>=4.9.0
-azure-identity>=1.19.0
-azure-keyvault-secrets>=4.9.0
 
-# AI/Agents (Microsoft Agent Framework)
+# AI/Agents
 agent-framework>=1.0.0b1
 
 # Utilities
 python-dotenv>=1.0.0
 pydantic>=2.10.0
 pydantic-settings>=2.7.0
-websockets>=14.0
-
-# HTTP Client
 httpx>=0.28.0
