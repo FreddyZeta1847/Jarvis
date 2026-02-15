@@ -3,24 +3,27 @@
  *
  * Simple voice conversation flow using Azure Speech SDK directly:
  *
- * 1. User clicks mic → start listening
+ * 1. User taps robot → start session (wake up)
  * 2. User speaks → Azure STT recognizes text
  * 3. Text sent to backend → AI responds
  * 4. Azure TTS speaks response
  * 5. User can interrupt anytime
- * 6. User clicks mic again → stop
+ * 6. User taps robot again → stop session (sleep)
+ * 7. Mic button toggles mute/unmute during active session
  */
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSpeechService } from './useSpeechService.js';
 import { useApp } from '../context/AppContext.jsx';
 
 export function useVoiceChat() {
   const [isSessionActive, setIsSessionActive] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const [status, setStatus] = useState('idle'); // idle, listening, processing, speaking
   const [lastTranscription, setLastTranscription] = useState('');
 
   const isSessionActiveRef = useRef(false);
+  const isMutedRef = useRef(false);
 
   const {
     isListening,
@@ -29,6 +32,8 @@ export function useVoiceChat() {
     error,
     startListening,
     stopListening,
+    pauseListening,
+    resumeListening,
     speak,
     stopSpeaking,
     checkIsSpeaking,
@@ -38,6 +43,15 @@ export function useVoiceChat() {
   } = useSpeechService();
 
   const { addMessage, setIsListening: setAppListening, setIsSpeaking: setAppSpeaking, setActiveAgent } = useApp();
+
+  // Sync voice state with AppContext
+  useEffect(() => {
+    setAppListening(isListening);
+  }, [isListening, setAppListening]);
+
+  useEffect(() => {
+    setAppSpeaking(isSpeaking);
+  }, [isSpeaking, setAppSpeaking]);
 
   /**
    * Handle when speech is recognized
@@ -98,7 +112,6 @@ export function useVoiceChat() {
    */
   const handlePartial = useCallback((text) => {
     // If user starts speaking while bot is talking, interrupt
-    // Use checkIsSpeaking() to get current value (avoids stale closure)
     if (checkIsSpeaking()) {
       console.log('User interrupted - stopping TTS');
       stopSpeaking();
@@ -115,7 +128,9 @@ export function useVoiceChat() {
 
     console.log('Starting voice session...');
     isSessionActiveRef.current = true;
+    isMutedRef.current = false;
     setIsSessionActive(true);
+    setIsMuted(false);
     setStatus('listening');
 
     try {
@@ -136,7 +151,9 @@ export function useVoiceChat() {
 
     console.log('Stopping voice session...');
     isSessionActiveRef.current = false;
+    isMutedRef.current = false;
     setIsSessionActive(false);
+    setIsMuted(false);
     setStatus('idle');
 
     stopSpeaking();
@@ -144,7 +161,7 @@ export function useVoiceChat() {
   }, [stopListening, stopSpeaking]);
 
   /**
-   * Toggle session
+   * Toggle session (start/stop)
    */
   const toggleSession = useCallback(() => {
     if (isSessionActive) {
@@ -154,14 +171,28 @@ export function useVoiceChat() {
     }
   }, [isSessionActive, startSession, stopSession]);
 
-  // Sync with AppContext
-  useCallback(() => {
-    setAppListening(isListening);
-  }, [isListening, setAppListening]);
+  /**
+   * Toggle mute/unmute (only during active session)
+   */
+  const toggleMute = useCallback(async () => {
+    if (!isSessionActiveRef.current) return;
 
-  useCallback(() => {
-    setAppSpeaking(isSpeaking);
-  }, [isSpeaking, setAppSpeaking]);
+    if (isMutedRef.current) {
+      // Unmute - resume listening
+      await resumeListening();
+      isMutedRef.current = false;
+      setIsMuted(false);
+      setStatus('listening');
+      console.log('Unmuted');
+    } else {
+      // Mute - pause listening
+      await pauseListening();
+      isMutedRef.current = true;
+      setIsMuted(true);
+      setStatus('listening');
+      console.log('Muted');
+    }
+  }, [pauseListening, resumeListening]);
 
   return {
     // State
@@ -169,6 +200,7 @@ export function useVoiceChat() {
     isListening,
     isSpeaking,
     isProcessing,
+    isMuted,
     status,
     error,
     lastTranscription,
@@ -176,6 +208,7 @@ export function useVoiceChat() {
     // Actions
     startSession,
     stopSession,
-    toggleSession
+    toggleSession,
+    toggleMute
   };
 }

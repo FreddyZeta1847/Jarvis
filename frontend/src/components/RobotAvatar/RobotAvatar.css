@@ -1,0 +1,246 @@
+.robot-container {
+  position: relative;
+  width: 230px;
+  height: 230px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s ease;
+}
+
+.robot-container:active {
+  transform: scale(0.96);
+}
+
+/* LED Ring - outline only, no fill */
+.led-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid rgba(100, 120, 160, 0.3);
+  background: transparent;
+  animation: led-breathe 3s ease-in-out infinite;
+  transition: border-color 0.6s ease, box-shadow 0.6s ease;
+}
+
+.led-ring::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background 0.6s ease, filter 0.6s ease;
+  z-index: -1;
+}
+
+/* Active state - orange ring */
+.robot-container.active .led-ring {
+  border-color: #f97316;
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.4), inset 0 0 10px rgba(249, 115, 22, 0.2);
+  animation: led-breathe-active 2s ease-in-out infinite;
+}
+
+.robot-container.active .led-ring::after {
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.25);
+}
+
+/* Listening state - brighter orange, faster */
+.robot-container.listening .led-ring {
+  border-color: #fb923c;
+  box-shadow: 0 0 14px rgba(251, 146, 60, 0.5), inset 0 0 10px rgba(251, 146, 60, 0.25);
+  animation: led-breathe-active 1.5s ease-in-out infinite;
+}
+
+.robot-container.listening .led-ring::after {
+  box-shadow: 0 0 24px rgba(249, 115, 22, 0.3);
+}
+
+/* Speaking state - blue / light blue */
+.robot-container.speaking .led-ring {
+  border-color: #60a5fa;
+  box-shadow: 0 0 14px rgba(96, 165, 250, 0.5), inset 0 0 10px rgba(96, 165, 250, 0.25);
+  animation: led-breathe-active 0.8s ease-in-out infinite;
+}
+
+.robot-container.speaking .led-ring::after {
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.35);
+}
+
+/* Processing state - subtle pulse */
+.robot-container.processing .led-ring {
+  border-color: #f97316;
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.3), inset 0 0 8px rgba(249, 115, 22, 0.15);
+  animation: led-breathe-active 1s ease-in-out infinite;
+}
+
+@keyframes led-breathe {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes led-breathe-active {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+/* Robot Face - glass sphere */
+.robot-face {
+  position: relative;
+  width: 145px;
+  height: 145px;
+  border-radius: 50%;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(200, 215, 240, 0.08) 40%,
+    rgba(100, 120, 160, 0.05) 100%
+  );
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  box-shadow:
+    inset 0 2px 6px rgba(255, 255, 255, 0.08),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.06),
+    0 4px 16px rgba(0, 0, 0, 0.1);
+  transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Glass highlight reflection */
+.robot-face::before {
+  content: '';
+  position: absolute;
+  top: 8%;
+  left: 18%;
+  width: 35%;
+  height: 25%;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.robot-container.active .robot-face {
+  background: linear-gradient(
+    145deg,
+    rgba(249, 115, 22, 0.1) 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(200, 215, 240, 0.05) 100%
+  );
+  border-color: rgba(249, 115, 22, 0.18);
+  box-shadow:
+    inset 0 2px 6px rgba(255, 255, 255, 0.08),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.06),
+    0 4px 20px rgba(249, 115, 22, 0.1);
+}
+
+/* Eyes */
+.robot-eyes {
+  display: flex;
+  gap: 24px;
+  margin-top: 4px;
+}
+
+.robot-eye {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(200, 210, 230, 0.3);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+/* Idle: eyes closed (sleeping) */
+.robot-eye.idle {
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(150, 160, 180, 0.4);
+}
+
+/* Active: eyes open */
+.robot-eye.active {
+  background: rgba(249, 115, 22, 0.6);
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.3);
+}
+
+/* Listening: eyes open, glowing orange */
+.robot-eye.listening {
+  background: rgba(249, 115, 22, 0.8);
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.5), 0 0 20px rgba(249, 115, 22, 0.2);
+}
+
+/* Speaking: eyes half open, pulsing blue */
+.robot-eye.speaking {
+  height: 12px;
+  background: rgba(59, 130, 246, 0.8);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.5), 0 0 16px rgba(59, 130, 246, 0.25);
+  animation: eye-pulse 0.8s ease-in-out infinite;
+}
+
+/* Processing: eyes blinking */
+.robot-eye.processing {
+  background: rgba(249, 115, 22, 0.5);
+  animation: eye-blink 1.2s ease-in-out infinite;
+}
+
+@keyframes eye-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(59, 130, 246, 0.5); }
+  50% { box-shadow: 0 0 16px rgba(59, 130, 246, 0.7), 0 0 24px rgba(59, 130, 246, 0.35); }
+}
+
+@keyframes eye-blink {
+  0%, 40%, 100% { height: 18px; opacity: 1; }
+  45%, 55% { height: 4px; opacity: 0.6; }
+  60% { height: 18px; opacity: 1; }
+}
+
+/* Wake-up animation */
+.robot-container.active .robot-face {
+  animation: wake-up 0.5s ease-out;
+}
+
+@keyframes wake-up {
+  0% { transform: scale(0.95); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+/* Desktop: larger avatar */
+@media (min-width: 768px) {
+  .robot-container {
+    width: 270px;
+    height: 270px;
+  }
+
+  .robot-face {
+    width: 175px;
+    height: 175px;
+  }
+
+  .robot-eye {
+    width: 22px;
+    height: 22px;
+  }
+
+  .robot-eye.idle {
+    height: 5px;
+  }
+
+  .robot-eyes {
+    gap: 30px;
+  }
+}

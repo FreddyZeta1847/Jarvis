@@ -9,14 +9,16 @@
   flex: 1;
   height: 44px;
   padding: 0 14px;
-  border: 1px solid var(--bg-tertiary);
+  border: 1px solid var(--border-glass);
   border-radius: 22px;
-  background: var(--bg-primary);
+  background: var(--bg-glass);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
   color: var(--text-primary);
   font-size: 1rem;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background 0.2s;
 }
 
 .chat-input-field::placeholder {
@@ -25,6 +27,7 @@
 
 .chat-input-field:focus {
   border-color: var(--accent);
+  background: var(--bg-glass-hover);
 }
 
 .chat-input-field:disabled {

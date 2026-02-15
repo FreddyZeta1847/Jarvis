@@ -54,7 +54,7 @@ export function useSpeechService() {
     const { token, region } = await getToken();
     const speechConfig = SpeechSDK.SpeechConfig.fromAuthorizationToken(token, region);
     speechConfig.speechRecognitionLanguage = 'it-IT';
-    speechConfig.speechSynthesisVoiceName = 'it-IT-ElsaNeural';
+    speechConfig.speechSynthesisVoiceName = 'it-IT-DiegoNeural';
     return speechConfig;
   }, [getToken]);
 
@@ -142,6 +142,38 @@ export function useSpeechService() {
     recognizerRef.current = null;
     setIsListening(false);
     console.log('Stopped listening');
+  }, []);
+
+  /**
+   * Pause recognition (mute) - keeps recognizer alive
+   */
+  const pauseListening = useCallback(async () => {
+    if (!recognizerRef.current) return;
+    try {
+      await new Promise((resolve, reject) => {
+        recognizerRef.current.stopContinuousRecognitionAsync(resolve, reject);
+      });
+    } catch (err) {
+      console.error('Error pausing recognition:', err);
+    }
+    setIsListening(false);
+    console.log('Paused listening (muted)');
+  }, []);
+
+  /**
+   * Resume recognition (unmute) - restarts on existing recognizer
+   */
+  const resumeListening = useCallback(async () => {
+    if (!recognizerRef.current) return;
+    try {
+      await new Promise((resolve, reject) => {
+        recognizerRef.current.startContinuousRecognitionAsync(resolve, reject);
+      });
+    } catch (err) {
+      console.error('Error resuming recognition:', err);
+    }
+    setIsListening(true);
+    console.log('Resumed listening (unmuted)');
   }, []);
 
   /**
@@ -332,11 +364,13 @@ export function useSpeechService() {
     // Actions
     startListening,
     stopListening,
+    pauseListening,
+    resumeListening,
     speak,
     stopSpeaking,
-    checkIsSpeaking,  // Use this for interruption detection (avoids stale state)
-    wasInterrupted,   // Check if current operation was interrupted
-    clearInterrupted, // Reset interrupted flag for new messages
+    checkIsSpeaking,
+    wasInterrupted,
+    clearInterrupted,
     getAIResponse
   };
 }

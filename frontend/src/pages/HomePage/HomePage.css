@@ -5,23 +5,6 @@
   overflow: hidden;
 }
 
-.home-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem;
-  background: var(--bg-secondary);
-  border-bottom: 1px solid var(--bg-tertiary);
-  flex-shrink: 0;
-}
-
-.home-header h1 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  color: var(--accent);
-}
-
 .home-main {
   flex: 1;
   overflow: hidden;
@@ -29,13 +12,148 @@
   flex-direction: column;
 }
 
-.home-footer {
-  padding: 0.75rem 1rem;
-  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
-  background: var(--bg-secondary);
-  border-top: 1px solid var(--bg-tertiary);
+/* Model Page - centered layout */
+.model-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem 1rem 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ============================================
+   Mode Switch (Voice / Chat toggle)
+   ============================================ */
+.mode-switch {
+  flex-shrink: 0;
+  margin-bottom: 0.5rem;
+  display: flex;
+  background: var(--bg-glass);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.mode-option {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
+  padding: 6px 16px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mode-option svg {
+  width: 15px;
+  height: 15px;
+}
+
+.mode-option.active {
+  background: var(--accent);
+  color: white;
+}
+
+.mode-option:not(.active):hover {
+  color: var(--text-primary);
+}
+
+/* ============================================
+   Voice mode
+   ============================================ */
+
+/* Mute button area - positioned between navbar and robot */
+.mute-area {
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+/* Robot area - takes all space, centers robot */
+.robot-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+/* ============================================
+   Chat mode
+   ============================================ */
+.chat-mode-content {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 500px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ============================================
+   Shared bottom section
+   ============================================ */
+.bottom-section {
   flex-shrink: 0;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.input-area {
+  width: 100%;
+}
+
+/* ============================================
+   Placeholder pages
+   ============================================ */
+.placeholder-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: var(--text-muted);
+}
+
+.placeholder-icon {
+  width: 48px;
+  height: 48px;
+  opacity: 0.4;
+}
+
+.placeholder-page p {
+  font-size: 0.9rem;
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .model-page {
+    padding: 1rem 1rem 0;
+  }
+
+  .bottom-section {
+    max-width: 500px;
+  }
+
+  .chat-mode-content {
+    max-width: 600px;
+  }
 }

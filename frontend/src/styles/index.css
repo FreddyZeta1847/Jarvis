@@ -4,19 +4,48 @@
   box-sizing: border-box;
 }
 
+/* Dark theme (default) - Orange + Dark Blue */
 :root {
-  --bg-primary: #1a1a2e;
-  --bg-secondary: #16213e;
-  --bg-tertiary: #0f3460;
-  --accent: #e94560;
-  --accent-hover: #ff6b6b;
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --text-muted: #666666;
+  --bg-primary: #080c16;
+  --bg-secondary: rgba(14, 20, 36, 0.7);
+  --bg-tertiary: rgba(22, 33, 62, 0.5);
+  --bg-glass: rgba(16, 24, 48, 0.45);
+  --bg-glass-hover: rgba(22, 33, 62, 0.6);
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --border-glass-strong: rgba(255, 255, 255, 0.12);
+  --accent: #f97316;
+  --accent-hover: #fb923c;
+  --accent-glow: rgba(249, 115, 22, 0.3);
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #475569;
   --success: #4ade80;
   --warning: #fbbf24;
   --error: #ef4444;
   --info: #3b82f6;
+  --blur: 20px;
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --bg-primary: #eef2f7;
+  --bg-secondary: rgba(255, 255, 255, 0.6);
+  --bg-tertiary: rgba(226, 232, 240, 0.5);
+  --bg-glass: rgba(255, 255, 255, 0.5);
+  --bg-glass-hover: rgba(255, 255, 255, 0.7);
+  --border-glass: rgba(0, 0, 0, 0.06);
+  --border-glass-strong: rgba(0, 0, 0, 0.1);
+  --accent: #ea580c;
+  --accent-hover: #f97316;
+  --accent-glow: rgba(234, 88, 12, 0.2);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #dc2626;
+  --info: #2563eb;
+  --blur: 24px;
 }
 
 html, body, #root {
@@ -29,20 +58,40 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   background-color: var(--bg-primary);
+  background-image: url('/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  /* Prevent pull-to-refresh on mobile */
   overscroll-behavior-y: contain;
+  transition: background-color 0.4s ease;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.15s !important;
+  }
 }
 
 /* Safe area padding for notched devices */
 @supports (padding: max(0px)) {
   body {
     padding-top: max(0px, env(safe-area-inset-top));
-    padding-bottom: max(0px, env(safe-area-inset-bottom));
     padding-left: max(0px, env(safe-area-inset-left));
     padding-right: max(0px, env(safe-area-inset-right));
   }
+}
+
+/* Glass utility */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border-glass);
 }
