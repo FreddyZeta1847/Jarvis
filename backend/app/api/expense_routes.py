@@ -61,11 +61,13 @@ async def list_expenses(
     query = f"SELECT * FROM c WHERE {' AND '.join(conditions)} ORDER BY c.date DESC OFFSET 0 LIMIT @limit"
     params.append({"name": "@limit", "value": limit})
 
-    items = []
-    async for item in container.query_items(query=query, parameters=params):
-        items.append(item)
-
-    return {"expenses": items}
+    try:
+        items = []
+        async for item in container.query_items(query=query, parameters=params):
+            items.append(item)
+        return {"expenses": items}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/expenses", status_code=201)
