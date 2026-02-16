@@ -11,7 +11,7 @@ bcrypt>=4.2.0
 azure-cosmos>=4.9.0
 
 # AI/Agents
-agent-framework>=1.0.0b1
+agent-framework-core>=1.0.0b1
 
 # Utilities
 python-dotenv>=1.0.0
