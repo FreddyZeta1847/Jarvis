@@ -32,6 +32,21 @@ async def health_check():
     return {"status": "healthy"}
 
 
+@app.get("/test-db")
+async def test_db():
+    try:
+        from app.database.cosmos import get_expenses_container
+        container = await get_expenses_container()
+        items = []
+        async for item in container.query_items(
+            query="SELECT TOP 1 * FROM c", enable_cross_partition_query=True
+        ):
+            items.append(item)
+        return {"status": "ok", "count": len(items)}
+    except Exception as e:
+        return {"status": "error", "detail": str(e), "type": type(e).__name__}
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
