@@ -35,6 +35,16 @@ class ExpenseUpdate(BaseModel):
 
 # --- Endpoints ---
 
+@router.get("/expenses/test-db")
+async def test_db():
+    """Temporary endpoint to debug Cosmos DB connection."""
+    try:
+        container = await get_expenses_container()
+        return {"status": "connected", "container": str(container)}
+    except Exception as e:
+        return {"status": "error", "detail": str(e), "type": type(e).__name__}
+
+
 @router.get("/expenses")
 async def list_expenses(
     category: Optional[str] = Query(None),
