@@ -24,11 +24,41 @@ export function useSpeechService() {
   const isSpeakingRef = useRef(false);  // Ref for interruption check (avoids stale closure)
   const isInterruptedRef = useRef(false);  // Flag to cancel ongoing operations
   const speakResolveRef = useRef(null);  // Resolve function for speak() promise
+  const audioContextRef = useRef(null);  // Pre-unlocked AudioContext for iOS
 
   // Callbacks
   const onTranscriptionRef = useRef(null);
   const onResponseRef = useRef(null);
   const onPartialRef = useRef(null);
+
+  /**
+   * Unlock audio playback on iOS Safari.
+   * Must be called during a user gesture (tap/click).
+   * Creates an AudioContext and plays a silent buffer to unblock Web Audio.
+   */
+  const unlockAudio = useCallback(async () => {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+
+      if (!audioContextRef.current) {
+        audioContextRef.current = new AudioCtx();
+      }
+
+      if (audioContextRef.current.state === 'suspended') {
+        await audioContextRef.current.resume();
+      }
+
+      // Play a silent buffer to fully unlock audio on iOS
+      const buffer = audioContextRef.current.createBuffer(1, 1, 22050);
+      const source = audioContextRef.current.createBufferSource();
+      source.buffer = buffer;
+      source.connect(audioContextRef.current.destination);
+      source.start(0);
+    } catch (e) {
+      console.log('Audio unlock skipped:', e.message);
+    }
+  }, []);
 
   /**
    * Get speech token from backend (keeps API key secure)
@@ -69,6 +99,10 @@ export function useSpeechService() {
 
     try {
       setError(null);
+
+      // Unlock audio on iOS (must happen during user gesture)
+      await unlockAudio();
+
       onTranscriptionRef.current = onTranscription;
       onPartialRef.current = onPartial;
 
@@ -122,7 +156,7 @@ export function useSpeechService() {
       setError(err.message);
       recognizerRef.current = null;
     }
-  }, [createSpeechConfig]);
+  }, [createSpeechConfig, unlockAudio]);
 
   /**
    * Stop speech recognition
@@ -216,13 +250,28 @@ export function useSpeechService() {
       await new Promise((resolve, reject) => {
         // Store resolve so stopSpeaking() can unblock this promise
         speakResolveRef.current = resolve;
-
-        // Resolve when audio PLAYBACK ends, not when synthesis ends
-        player.onAudioEnd = () => {
+        let resolved = false;
+        const safeResolve = () => {
+          if (resolved) return;
+          resolved = true;
           speakResolveRef.current = null;
           setIsSpeaking(false);
           isSpeakingRef.current = false;
           resolve();
+        };
+
+        // Timeout fallback: if onAudioEnd never fires (iOS), resolve after
+        // estimated duration based on text length (~80ms per character)
+        const timeoutMs = Math.max(5000, text.length * 80);
+        const timeout = setTimeout(() => {
+          console.log('TTS timeout fallback triggered');
+          safeResolve();
+        }, timeoutMs);
+
+        // Resolve when audio PLAYBACK ends, not when synthesis ends
+        player.onAudioEnd = () => {
+          clearTimeout(timeout);
+          safeResolve();
         };
 
         synthesizer.speakTextAsync(
@@ -232,19 +281,27 @@ export function useSpeechService() {
             synthesizerRef.current = null;
             if (result.reason === SpeechSDK.ResultReason.Canceled) {
               // Interrupted or canceled - resolve immediately
-              speakResolveRef.current = null;
-              resolve();
+              clearTimeout(timeout);
+              safeResolve();
             } else if (result.reason !== SpeechSDK.ResultReason.SynthesizingAudioCompleted) {
-              speakResolveRef.current = null;
-              reject(new Error('TTS failed: ' + result.errorDetails));
+              clearTimeout(timeout);
+              if (!resolved) {
+                resolved = true;
+                speakResolveRef.current = null;
+                reject(new Error('TTS failed: ' + result.errorDetails));
+              }
             }
             // For SynthesizingAudioCompleted, wait for onAudioEnd to resolve
           },
           (error) => {
+            clearTimeout(timeout);
             synthesizer.close();
             synthesizerRef.current = null;
-            speakResolveRef.current = null;
-            reject(error);
+            if (!resolved) {
+              resolved = true;
+              speakResolveRef.current = null;
+              reject(error);
+            }
           }
         );
       });
@@ -350,6 +407,9 @@ export function useSpeechService() {
       }
       if (playerRef.current) {
         try { playerRef.current.close(); } catch (e) {}
+      }
+      if (audioContextRef.current) {
+        try { audioContextRef.current.close(); } catch (e) {}
       }
     };
   }, []);
