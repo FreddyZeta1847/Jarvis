@@ -18,7 +18,7 @@ export function useSpeechService() {
   // Refs for SDK objects
   const recognizerRef = useRef(null);
   const synthesizerRef = useRef(null);
-  const audioElRef = useRef(null);  // <audio> element for TTS playback (iOS-compatible)
+  const playerRef = useRef(null);  // SpeakerAudioDestination for TTS playback
   const tokenRef = useRef(null);
   const tokenExpiryRef = useRef(null);
   const isSpeakingRef = useRef(false);  // Ref for interruption check (avoids stale closure)
@@ -211,9 +211,7 @@ export function useSpeechService() {
   }, []);
 
   /**
-   * Speak text using TTS with interruption support.
-   * Uses <audio> element for playback instead of SpeakerAudioDestination
-   * for reliable iOS Safari compatibility.
+   * Speak text using TTS with interruption support
    */
   const speak = useCallback(async (text) => {
     if (!text) return;
@@ -226,12 +224,9 @@ export function useSpeechService() {
       try { synthesizerRef.current.close(); } catch (e) {}
       synthesizerRef.current = null;
     }
-    if (audioElRef.current) {
-      try {
-        audioElRef.current.pause();
-        if (audioElRef.current.src) URL.revokeObjectURL(audioElRef.current.src);
-      } catch (e) {}
-      audioElRef.current = null;
+    if (playerRef.current) {
+      try { playerRef.current.pause(); } catch (e) {}
+      playerRef.current = null;
     }
 
     try {
@@ -240,65 +235,70 @@ export function useSpeechService() {
 
       const speechConfig = await createSpeechConfig();
 
-      // Synthesize to raw audio data (no speaker output).
-      // Pass null so SDK returns audio in result.audioData.
-      const synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig, null);
+      // Create player for interruption control
+      const player = new SpeechSDK.SpeakerAudioDestination();
+      playerRef.current = player;
+
+      const audioConfig = SpeechSDK.AudioConfig.fromSpeakerOutput(player);
+      const synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig, audioConfig);
       synthesizerRef.current = synthesizer;
 
-      // Step 1: Get audio data from Azure
-      const result = await new Promise((resolve, reject) => {
-        speakResolveRef.current = () => resolve(null);
+      await new Promise((resolve, reject) => {
+        speakResolveRef.current = resolve;
+        let resolved = false;
+        const safeResolve = () => {
+          if (resolved) return;
+          resolved = true;
+          speakResolveRef.current = null;
+          setIsSpeaking(false);
+          isSpeakingRef.current = false;
+          resolve();
+        };
+
+        // Timeout fallback: if onAudioEnd never fires (iOS), resolve after
+        // estimated duration based on text length (~80ms per character)
+        const timeoutMs = Math.max(5000, text.length * 80);
+        const timeout = setTimeout(() => {
+          console.log('TTS timeout fallback triggered');
+          safeResolve();
+        }, timeoutMs);
+
+        // Resolve when audio PLAYBACK ends, not when synthesis ends
+        player.onAudioEnd = () => {
+          clearTimeout(timeout);
+          safeResolve();
+        };
+
         synthesizer.speakTextAsync(
           text,
           (result) => {
             synthesizer.close();
             synthesizerRef.current = null;
-            speakResolveRef.current = null;
-            if (result.reason === SpeechSDK.ResultReason.SynthesizingAudioCompleted) {
-              resolve(result);
-            } else if (result.reason === SpeechSDK.ResultReason.Canceled) {
-              resolve(null);
-            } else {
-              reject(new Error('TTS failed: ' + result.errorDetails));
+            if (result.reason === SpeechSDK.ResultReason.Canceled) {
+              clearTimeout(timeout);
+              safeResolve();
+            } else if (result.reason !== SpeechSDK.ResultReason.SynthesizingAudioCompleted) {
+              clearTimeout(timeout);
+              if (!resolved) {
+                resolved = true;
+                speakResolveRef.current = null;
+                reject(new Error('TTS failed: ' + result.errorDetails));
+              }
             }
+            // For SynthesizingAudioCompleted, wait for onAudioEnd or timeout
           },
           (error) => {
+            clearTimeout(timeout);
             synthesizer.close();
             synthesizerRef.current = null;
-            speakResolveRef.current = null;
-            reject(error);
+            if (!resolved) {
+              resolved = true;
+              speakResolveRef.current = null;
+              reject(error);
+            }
           }
         );
       });
-
-      // Step 2: Play via <audio> element (reliable on iOS Safari)
-      if (result?.audioData && !isInterruptedRef.current) {
-        const blob = new Blob([result.audioData], { type: 'audio/wav' });
-        const url = URL.createObjectURL(blob);
-        const audio = new Audio(url);
-        audioElRef.current = audio;
-
-        await new Promise((resolve) => {
-          speakResolveRef.current = resolve;
-          audio.onended = () => {
-            URL.revokeObjectURL(url);
-            audioElRef.current = null;
-            speakResolveRef.current = null;
-            resolve();
-          };
-          audio.onerror = () => {
-            URL.revokeObjectURL(url);
-            audioElRef.current = null;
-            speakResolveRef.current = null;
-            resolve();
-          };
-          audio.play().catch(() => {
-            console.log('Audio play blocked');
-            speakResolveRef.current = null;
-            resolve();
-          });
-        });
-      }
 
     } catch (err) {
       if (!err.message?.includes('closed') && !err.message?.includes('canceled')) {
@@ -318,16 +318,16 @@ export function useSpeechService() {
     console.log('Interrupting TTS...');
     isInterruptedRef.current = true;
 
-    // Stop the <audio> element
-    if (audioElRef.current) {
+    // Stop the audio player immediately
+    if (playerRef.current) {
       try {
-        audioElRef.current.pause();
-        if (audioElRef.current.src) URL.revokeObjectURL(audioElRef.current.src);
+        playerRef.current.pause();
+        playerRef.current.close();
       } catch (e) {}
-      audioElRef.current = null;
+      playerRef.current = null;
     }
 
-    // Close the synthesizer (if still synthesizing)
+    // Close the synthesizer
     if (synthesizerRef.current) {
       try { synthesizerRef.current.close(); } catch (e) {}
       synthesizerRef.current = null;
@@ -393,8 +393,8 @@ export function useSpeechService() {
       if (synthesizerRef.current) {
         try { synthesizerRef.current.close(); } catch (e) {}
       }
-      if (audioElRef.current) {
-        try { audioElRef.current.pause(); } catch (e) {}
+      if (playerRef.current) {
+        try { playerRef.current.close(); } catch (e) {}
       }
       if (audioContextRef.current) {
         try { audioContextRef.current.close(); } catch (e) {}
