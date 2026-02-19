@@ -52,19 +52,19 @@
   backdrop-filter: blur(var(--blur));
   -webkit-backdrop-filter: blur(var(--blur));
   border: 1px solid var(--border-glass);
-  border-radius: 8px;
-  padding: 2px;
-  gap: 1px;
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
 }
 
 .view-toggle-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
@@ -74,8 +74,8 @@
 }
 
 .view-toggle-btn svg {
-  width: 14px;
-  height: 14px;
+  width: 17px;
+  height: 17px;
 }
 
 .view-toggle-btn.active {
