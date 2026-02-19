@@ -25,7 +25,8 @@ CLAUDE.md
 EXPLAINED.md
 docker-compose.yml
 nul
-*.png
+/image.png
+/*.jpeg
 
 
 # IDE
