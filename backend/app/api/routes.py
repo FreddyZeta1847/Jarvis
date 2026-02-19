@@ -136,7 +136,7 @@ async def chat(
     Chat endpoint - send message, get AI response.
     Protected: requires valid JWT token.
     """
-    from app.agents.kernel import send_message
+    from app.agents.orchestrator import send_message
 
     try:
         response_text = await send_message(request.message)

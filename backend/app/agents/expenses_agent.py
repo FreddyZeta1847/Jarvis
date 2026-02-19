@@ -1,7 +1,7 @@
 from agent_framework import Agent
 from agent_framework.azure import AzureOpenAIChatClient
 
-from app.agents.plugins.expenses import (
+from app.agents.tools.expenses import (
     query_expenses,
     get_expense_summary,
     add_expense,

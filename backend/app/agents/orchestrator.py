@@ -19,7 +19,7 @@ SYSTEM_PROMPT = (
 )
 
 _agent = None
-_thread = None
+_thread = None  # the memory of the conversation, it cancel evry time the backend restart
 
 
 def _create_client():

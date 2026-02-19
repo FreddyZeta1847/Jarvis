@@ -11,7 +11,7 @@
 .expenses-header {
   flex-shrink: 0;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   padding: 1rem 0.25rem 0.5rem;
 }
@@ -20,6 +20,12 @@
   display: flex;
   align-items: baseline;
   gap: 0.35rem;
+}
+
+.expenses-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
 .total-amount {
@@ -37,6 +43,48 @@
 .total-count {
   font-size: 0.78rem;
   color: var(--text-secondary);
+}
+
+/* Compact view toggle (icon-only, inline in header) */
+.view-toggle {
+  display: flex;
+  background: var(--bg-glass);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 1px;
+}
+
+.view-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+}
+
+.view-toggle-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.view-toggle-btn.active {
+  background: var(--accent);
+  color: white;
+}
+
+.view-toggle-btn:not(.active):hover {
+  color: var(--text-primary);
 }
 
 /* Category filter bar */
