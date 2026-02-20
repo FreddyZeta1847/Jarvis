@@ -1,5 +1,9 @@
+import logging
+
 from azure.cosmos.aio import CosmosClient
 from app import config
+
+logger = logging.getLogger(__name__)
 
 _client = None
 _expenses_container = None
@@ -20,4 +24,5 @@ async def get_expenses_container():
     _client = CosmosClient(config.COSMOS_ENDPOINT, credential=config.COSMOS_KEY)
     database = _client.get_database_client(config.COSMOS_DATABASE)
     _expenses_container = database.get_container_client("expenses")
+    logger.info("Cosmos DB connected (db=%s, container=expenses)", config.COSMOS_DATABASE)
     return _expenses_container

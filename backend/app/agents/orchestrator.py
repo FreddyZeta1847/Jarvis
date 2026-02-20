@@ -1,8 +1,13 @@
+import logging
+
 from agent_framework import Agent
 from agent_framework.azure import AzureOpenAIChatClient
 
 from app import config
 from app.agents.expenses_agent import create_expenses_agent
+from app.agents.calendar_agent import create_calendar_agent
+
+logger = logging.getLogger(__name__)
 
 SYSTEM_PROMPT = (
     "You are Jarvis, a personal AI voice assistant. "
@@ -13,8 +18,11 @@ SYSTEM_PROMPT = (
     "Respond in the same language the user speaks to you.\n\n"
     "You have access to specialist agents. "
     "When the user asks anything related to expenses, spending, costs, payments, or money tracking, "
-    "delegate to the expenses tool. Pass the user's full request as-is. "
-    "If the expenses tool asks a clarification question, relay it naturally to the user. "
+    "delegate to the expenses tool. "
+    "When the user asks anything related to calendar, events, schedule, meetings, appointments, or free time, "
+    "delegate to the calendar tool. "
+    "Pass the user's full request as-is. "
+    "If a specialist tool asks a clarification question, relay it naturally to the user. "
     "For all other topics, respond directly."
 )
 
@@ -39,6 +47,7 @@ def _create_client():
 
 def _create_agent():
     client = _create_client()
+    logger.info("Azure OpenAI client connected (deployment=%s)", config.AZURE_OPENAI_DEPLOYMENT)
 
     # Create the expenses agent and wrap it as a tool for the orchestrator
     expenses_agent = create_expenses_agent(client)
@@ -52,11 +61,25 @@ def _create_agent():
         arg_description="The user's expense-related request in natural language",
     )
 
+    # Create the calendar agent and wrap it as a tool for the orchestrator
+    calendar_agent = create_calendar_agent(client)
+    calendar_tool = calendar_agent.as_tool(
+        name="calendar",
+        description=(
+            "Manage Google Calendar: list, create, update, delete events and find free time slots. "
+            "Use this for any request related to calendar, events, schedule, meetings, or appointments."
+        ),
+        arg_name="request",
+        arg_description="The user's calendar-related request in natural language",
+    )
+
+    logger.info("Orchestrator ready (tools: expenses, calendar)")
+
     return Agent(
         client=client,
         name="jarvis",
         instructions=SYSTEM_PROMPT,
-        tools=[expenses_tool],
+        tools=[expenses_tool, calendar_tool],
     )
 
 
