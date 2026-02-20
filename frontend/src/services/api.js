@@ -90,4 +90,40 @@ export const api = {
     });
     if (!response.ok) throw new Error('Failed to delete expense');
   },
+
+  async getCalendarEvents({ startDate, endDate, limit = 100 } = {}) {
+    const params = new URLSearchParams();
+    if (startDate) params.set('start_date', startDate);
+    if (endDate) params.set('end_date', endDate);
+    params.set('limit', String(limit));
+    const qs = params.toString();
+    const response = await fetchWithAuth(`/api/calendar/events${qs ? `?${qs}` : ''}`);
+    if (!response.ok) throw new Error('Failed to fetch calendar events');
+    return response.json();
+  },
+
+  async createCalendarEvent(event) {
+    const response = await fetchWithAuth('/api/calendar/events', {
+      method: 'POST',
+      body: JSON.stringify(event),
+    });
+    if (!response.ok) throw new Error('Failed to create calendar event');
+    return response.json();
+  },
+
+  async updateCalendarEvent(id, updates) {
+    const response = await fetchWithAuth(`/api/calendar/events/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updates),
+    });
+    if (!response.ok) throw new Error('Failed to update calendar event');
+    return response.json();
+  },
+
+  async deleteCalendarEvent(id) {
+    const response = await fetchWithAuth(`/api/calendar/events/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) throw new Error('Failed to delete calendar event');
+  },
 };
