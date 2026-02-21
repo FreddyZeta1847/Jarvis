@@ -24,6 +24,31 @@
   gap: 0.5rem;
 }
 
+/* Weather Widget */
+.weather-widget {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+  background: var(--bg-glass);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border-glass);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+}
+
+.weather-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.weather-temp {
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
 /* Language Selector */
 .lang-selector {
   position: relative;

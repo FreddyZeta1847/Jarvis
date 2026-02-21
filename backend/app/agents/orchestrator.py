@@ -6,6 +6,7 @@ from agent_framework.azure import AzureOpenAIChatClient
 from app import config
 from app.agents.expenses_agent import create_expenses_agent
 from app.agents.calendar_agent import create_calendar_agent
+from app.agents.weather_agent import create_weather_agent
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +22,8 @@ SYSTEM_PROMPT = (
     "delegate to the expenses tool. "
     "When the user asks anything related to calendar, events, schedule, meetings, appointments, or free time, "
     "delegate to the calendar tool. "
+    "When the user asks anything related to weather, temperature, rain, forecast, climate, or outdoor conditions, "
+    "delegate to the weather tool. "
     "Pass the user's full request as-is. "
     "If a specialist tool asks a clarification question, relay it naturally to the user. "
     "For all other topics, respond directly."
@@ -73,13 +76,25 @@ def _create_agent():
         arg_description="The user's calendar-related request in natural language",
     )
 
-    logger.info("Orchestrator ready (tools: expenses, calendar)")
+    # Create the weather agent and wrap it as a tool for the orchestrator
+    weather_agent = create_weather_agent(client)
+    weather_tool = weather_agent.as_tool(
+        name="weather",
+        description=(
+            "Get weather information: current conditions and multi-day forecasts for any location. "
+            "Use this for any request related to weather, temperature, rain, forecast, or climate."
+        ),
+        arg_name="request",
+        arg_description="The user's weather-related request in natural language",
+    )
+
+    logger.info("Orchestrator ready (tools: expenses, calendar, weather)")
 
     return Agent(
         client=client,
         name="jarvis",
         instructions=SYSTEM_PROMPT,
-        tools=[expenses_tool, calendar_tool],
+        tools=[expenses_tool, calendar_tool, weather_tool],
     )
 
 

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext.jsx';
+import WeatherWidget from './WeatherWidget.jsx';
 import './Navbar.css';
 
 const LANGUAGES = [
@@ -36,6 +37,8 @@ function Navbar({ language, onLanguageChange, theme, onThemeToggle }) {
       <div className="navbar-logo">JARVIS</div>
 
       <div className="navbar-controls">
+        <WeatherWidget />
+
         {/* Language Selector */}
         <div className="lang-selector" ref={langRef}>
           <button

@@ -13,6 +13,7 @@ from app import config
 from app.api.routes import router as api_router
 from app.api.expense_routes import router as expense_router
 from app.api.calendar_routes import router as calendar_router
+from app.api.weather_routes import router as weather_router
 
 logger = logging.getLogger("jarvis")
 
@@ -33,6 +34,7 @@ app.add_middleware(
 app.include_router(api_router, prefix="/api")
 app.include_router(expense_router, prefix="/api")
 app.include_router(calendar_router, prefix="/api")
+app.include_router(weather_router, prefix="/api")
 
 
 @app.on_event("startup")
@@ -65,6 +67,12 @@ async def startup_log():
         logger.info("Google Calendar: OK (client=%s...)", config.GOOGLE_CLIENT_ID[:20])
     else:
         logger.warning("Google Calendar: NOT CONFIGURED")
+
+    # Weather
+    if config.OPENWEATHERMAP_API_KEY:
+        logger.info("Weather: OK (OpenWeatherMap)")
+    else:
+        logger.warning("Weather: NOT CONFIGURED")
 
     logger.info("=== Startup Complete ===")
 

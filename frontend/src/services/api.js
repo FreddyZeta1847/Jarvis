@@ -126,4 +126,10 @@ export const api = {
     });
     if (!response.ok) throw new Error('Failed to delete calendar event');
   },
+
+  async getWeather(lat, lon) {
+    const response = await fetchWithAuth(`/api/weather?lat=${lat}&lon=${lon}`);
+    if (!response.ok) throw new Error('Failed to fetch weather');
+    return response.json();
+  },
 };
