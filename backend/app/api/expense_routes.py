@@ -22,6 +22,7 @@ class ExpenseCreate(BaseModel):
     date: str
     paymentMethod: str = "card"
     currency: str = "EUR"
+    folderId: Optional[str] = None
 
 
 class ExpenseUpdate(BaseModel):
@@ -31,6 +32,7 @@ class ExpenseUpdate(BaseModel):
     date: Optional[str] = None
     paymentMethod: Optional[str] = None
     currency: Optional[str] = None
+    folderId: Optional[str] = None
 
 
 # --- Endpoints ---
@@ -40,12 +42,16 @@ async def list_expenses(
     category: Optional[str] = Query(None),
     start_date: Optional[str] = Query(None, alias="start_date"),
     end_date: Optional[str] = Query(None, alias="end_date"),
+    folder_id: Optional[str] = Query(None, alias="folder_id"),
     limit: int = Query(50, ge=1, le=200),
     user: dict = Depends(get_current_user),
 ):
     container = await get_expenses_container()
 
-    conditions = ["c.userId = @userId"]
+    conditions = [
+        "c.userId = @userId",
+        "(c.type = 'expense' OR NOT IS_DEFINED(c.type))",
+    ]
     params = [{"name": "@userId", "value": USER_ID}]
 
     if category:
@@ -57,6 +63,9 @@ async def list_expenses(
     if end_date:
         conditions.append("c.date <= @endDate")
         params.append({"name": "@endDate", "value": end_date})
+    if folder_id:
+        conditions.append("c.folderId = @folderId")
+        params.append({"name": "@folderId", "value": folder_id})
 
     query = f"SELECT * FROM c WHERE {' AND '.join(conditions)} ORDER BY c.date DESC OFFSET 0 LIMIT @limit"
     params.append({"name": "@limit", "value": limit})
@@ -82,6 +91,7 @@ async def create_expense(
     expense = {
         "id": expense_id,
         "userId": USER_ID,
+        "type": "expense",
         "amount": body.amount,
         "currency": body.currency,
         "description": body.description,
@@ -91,6 +101,9 @@ async def create_expense(
         "createdVia": "web",
         "createdAt": datetime.now(timezone.utc).isoformat(),
     }
+
+    if body.folderId:
+        expense["folderId"] = body.folderId
 
     await container.create_item(body=expense)
     return {"expense": expense}

@@ -79,18 +79,19 @@ function CenteredMetric({ centerX, centerY, total }) {
   );
 }
 
-function ExpensesDashboard({ expenses, categories }) {
+function ExpensesDashboard({ expenses, categories, hidePeriodFilter = false }) {
   const [period, setPeriod] = useState('1M');
   const [selectedDay, setSelectedDay] = useState(null);
 
   const { start, end } = useMemo(() => getDateRange(period), [period]);
 
-  // Filter expenses by selected period
+  // Filter expenses by selected period (skip when period filter is hidden)
   const filteredExpenses = useMemo(() => {
+    if (hidePeriodFilter) return expenses;
     const startStr = formatDate(start);
     const endStr = formatDate(end);
     return expenses.filter(e => e.date >= startStr && e.date <= endStr);
-  }, [expenses, start, end]);
+  }, [expenses, start, end, hidePeriodFilter]);
 
   const total = useMemo(
     () => filteredExpenses.reduce((sum, e) => sum + e.amount, 0),
@@ -121,13 +122,22 @@ function ExpensesDashboard({ expenses, categories }) {
       dailyTotals[e.date] = (dailyTotals[e.date] || 0) + e.amount;
     });
 
-    const allDates = generateAllDates(start, end);
+    // When period filter is hidden, derive range from actual data
+    let barStart = start;
+    let barEnd = end;
+    if (hidePeriodFilter && filteredExpenses.length > 0) {
+      const dates = filteredExpenses.map(e => e.date).sort();
+      barStart = new Date(dates[0] + 'T00:00:00');
+      barEnd = new Date(dates[dates.length - 1] + 'T00:00:00');
+    }
+
+    const allDates = generateAllDates(barStart, barEnd);
     return allDates.map(date => ({
       date,
       day: parseInt(date.slice(8), 10).toString(),
       amount: Math.round((dailyTotals[date] || 0) * 100) / 100,
     }));
-  }, [filteredExpenses, start, end]);
+  }, [filteredExpenses, start, end, hidePeriodFilter]);
 
   // Determine which tick labels to show on x-axis
   const barTickValues = useMemo(() => {
@@ -168,19 +178,21 @@ function ExpensesDashboard({ expenses, categories }) {
   if (filteredExpenses.length === 0) {
     return (
       <div className="dashboard-container">
-        <div className="period-filter-bar">
-          {PERIODS.map(p => (
-            <button
-              key={p.key}
-              className={`period-pill ${period === p.key ? 'active' : ''}`}
-              onClick={() => setPeriod(p.key)}
-            >
-              {p.key}
-            </button>
-          ))}
-        </div>
+        {!hidePeriodFilter && (
+          <div className="period-filter-bar">
+            {PERIODS.map(p => (
+              <button
+                key={p.key}
+                className={`period-pill ${period === p.key ? 'active' : ''}`}
+                onClick={() => setPeriod(p.key)}
+              >
+                {p.key}
+              </button>
+            ))}
+          </div>
+        )}
         <div className="dashboard-empty">
-          <p>No expenses for this period</p>
+          <p>{hidePeriodFilter ? 'No expenses in this folder' : 'No expenses for this period'}</p>
         </div>
       </div>
     );
@@ -189,17 +201,19 @@ function ExpensesDashboard({ expenses, categories }) {
   return (
     <div className="dashboard-container">
       {/* Period filter */}
-      <div className="period-filter-bar">
-        {PERIODS.map(p => (
-          <button
-            key={p.key}
-            className={`period-pill ${period === p.key ? 'active' : ''}`}
-            onClick={() => { setPeriod(p.key); setSelectedDay(null); }}
-          >
-            {p.key}
-          </button>
-        ))}
-      </div>
+      {!hidePeriodFilter && (
+        <div className="period-filter-bar">
+          {PERIODS.map(p => (
+            <button
+              key={p.key}
+              className={`period-pill ${period === p.key ? 'active' : ''}`}
+              onClick={() => { setPeriod(p.key); setSelectedDay(null); }}
+            >
+              {p.key}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Category donut chart */}
       <div className="dashboard-card">

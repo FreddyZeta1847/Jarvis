@@ -8,6 +8,10 @@
   animation: pageIn 0.25s ease;
 }
 
+.expenses-page.expenses-page-no-pad {
+  padding: 0;
+}
+
 /* Header */
 .expenses-header {
   flex-shrink: 0;
@@ -186,6 +190,17 @@
 .fab-add svg {
   width: 24px;
   height: 24px;
+}
+
+/* Folders list */
+.folders-list {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem 0 5rem;
 }
 
 /* Desktop */

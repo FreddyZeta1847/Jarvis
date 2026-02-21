@@ -7,7 +7,7 @@ const PAYMENT_METHODS = [
   { value: 'transfer', label: 'Transfer' },
 ];
 
-function ExpenseModal({ expense, categories, onSave, onClose }) {
+function ExpenseModal({ expense, categories, folders = [], onSave, onClose }) {
   const isEdit = !!expense;
 
   const [form, setForm] = useState({
@@ -17,6 +17,7 @@ function ExpenseModal({ expense, categories, onSave, onClose }) {
     date: new Date().toISOString().split('T')[0],
     paymentMethod: 'card',
     currency: 'EUR',
+    folderId: '',
   });
   const [saving, setSaving] = useState(false);
 
@@ -29,6 +30,7 @@ function ExpenseModal({ expense, categories, onSave, onClose }) {
         date: expense.date,
         paymentMethod: expense.paymentMethod,
         currency: expense.currency,
+        folderId: expense.folderId || '',
       });
     }
   }, [expense]);
@@ -143,6 +145,23 @@ function ExpenseModal({ expense, categories, onSave, onClose }) {
               ))}
             </div>
           </div>
+
+          {/* Folder (optional) */}
+          {folders.length > 0 && (
+            <div className="form-group">
+              <label className="form-label">Folder</label>
+              <select
+                className="form-input form-select"
+                value={form.folderId}
+                onChange={(e) => handleChange('folderId', e.target.value)}
+              >
+                <option value="">None</option>
+                {folders.map((f) => (
+                  <option key={f.id} value={f.id}>{f.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Submit */}
           <button

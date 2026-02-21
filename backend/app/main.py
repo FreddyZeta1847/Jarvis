@@ -14,6 +14,7 @@ from app.api.routes import router as api_router
 from app.api.expense_routes import router as expense_router
 from app.api.calendar_routes import router as calendar_router
 from app.api.weather_routes import router as weather_router
+from app.api.folder_routes import router as folder_router
 
 logger = logging.getLogger("jarvis")
 
@@ -35,6 +36,7 @@ app.include_router(api_router, prefix="/api")
 app.include_router(expense_router, prefix="/api")
 app.include_router(calendar_router, prefix="/api")
 app.include_router(weather_router, prefix="/api")
+app.include_router(folder_router, prefix="/api")
 
 
 @app.on_event("startup")
@@ -61,6 +63,12 @@ async def startup_log():
         logger.info("Cosmos DB: OK (db=%s)", config.COSMOS_DATABASE)
     else:
         logger.warning("Cosmos DB: NOT CONFIGURED")
+
+    # Azure Blob Storage
+    if config.AZURE_STORAGE_CONNECTION_STRING:
+        logger.info("Azure Blob Storage: OK")
+    else:
+        logger.warning("Azure Blob Storage: NOT CONFIGURED")
 
     # Google Calendar
     if config.GOOGLE_CLIENT_ID and config.GOOGLE_REFRESH_TOKEN:

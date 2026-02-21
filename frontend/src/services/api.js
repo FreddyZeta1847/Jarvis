@@ -10,6 +10,11 @@ async function fetchWithAuth(url, options = {}) {
     ...options.headers,
   };
 
+  // When body is FormData, let the browser set Content-Type with boundary
+  if (options.body instanceof FormData) {
+    delete headers['Content-Type'];
+  }
+
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -131,5 +136,59 @@ export const api = {
     const response = await fetchWithAuth(`/api/weather?lat=${lat}&lon=${lon}`);
     if (!response.ok) throw new Error('Failed to fetch weather');
     return response.json();
+  },
+
+  // Folders
+  async getFolders() {
+    const response = await fetchWithAuth('/api/folders');
+    if (!response.ok) throw new Error('Failed to fetch folders');
+    return response.json();
+  },
+
+  async getFolder(id) {
+    const response = await fetchWithAuth(`/api/folders/${id}`);
+    if (!response.ok) throw new Error('Failed to fetch folder');
+    return response.json();
+  },
+
+  async createFolder(formData) {
+    const response = await fetchWithAuth('/api/folders', {
+      method: 'POST',
+      body: formData,
+    });
+    if (!response.ok) throw new Error('Failed to create folder');
+    return response.json();
+  },
+
+  async updateFolder(id, formData) {
+    const response = await fetchWithAuth(`/api/folders/${id}`, {
+      method: 'PUT',
+      body: formData,
+    });
+    if (!response.ok) throw new Error('Failed to update folder');
+    return response.json();
+  },
+
+  async deleteFolder(id) {
+    const response = await fetchWithAuth(`/api/folders/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) throw new Error('Failed to delete folder');
+  },
+
+  async assignExpensesToFolder(folderId, expenseIds) {
+    const response = await fetchWithAuth(`/api/folders/${folderId}/expenses`, {
+      method: 'POST',
+      body: JSON.stringify({ expenseIds: expenseIds }),
+    });
+    if (!response.ok) throw new Error('Failed to assign expenses to folder');
+    return response.json();
+  },
+
+  async removeExpenseFromFolder(folderId, expenseId) {
+    const response = await fetchWithAuth(`/api/folders/${folderId}/expenses/${expenseId}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) throw new Error('Failed to remove expense from folder');
   },
 };
