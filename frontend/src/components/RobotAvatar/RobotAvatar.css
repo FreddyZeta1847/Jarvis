@@ -80,9 +80,17 @@
 }
 
 /* Hide CSS ring when SVG waveform is active */
-.led-ring.hidden {
-  opacity: 0;
+.robot-container .led-ring.hidden,
+.robot-container.listening .led-ring.hidden,
+.robot-container.speaking .led-ring.hidden {
+  opacity: 0 !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  animation: none !important;
   transition: opacity 0.3s ease;
+}
+.robot-container .led-ring.hidden::after {
+  box-shadow: none !important;
 }
 
 @keyframes led-breathe {

@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import './RobotAvatar.css';
 
-const NUM_POINTS = 64;
+const NUM_POINTS = 32;
 const BASE_RADIUS = 112; // Half of 230px container minus some padding
 const BASE_RADIUS_DESKTOP = 132; // Half of 270px container
-const DISPLACEMENT_SCALE = 15;
+const DISPLACEMENT_SCALE = 44;
 const SMOOTH_FACTOR = 0.18;
 
 /**
