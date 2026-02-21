@@ -19,7 +19,7 @@ import { useApp } from '../context/AppContext.jsx';
 export function useVoiceChat() {
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [status, setStatus] = useState('idle'); // idle, listening, processing, speaking
+  const [status, setStatus] = useState('idle'); // idle, listening, processing, speaking, muted
   const [lastTranscription, setLastTranscription] = useState('');
 
   const isSessionActiveRef = useRef(false);
@@ -44,6 +44,17 @@ export function useVoiceChat() {
   } = useSpeechService();
 
   const { addMessage, setIsListening: setAppListening, setIsSpeaking: setAppSpeaking, setActiveAgent } = useApp();
+
+  // Helpers to update state + ref together
+  const setSessionActive = useCallback((val) => {
+    isSessionActiveRef.current = val;
+    setIsSessionActive(val);
+  }, []);
+
+  const setMutedState = useCallback((val) => {
+    isMutedRef.current = val;
+    setIsMuted(val);
+  }, []);
 
   // Sync voice state with AppContext
   useEffect(() => {
@@ -132,21 +143,18 @@ export function useVoiceChat() {
     if (isSessionActiveRef.current) return;
 
     console.log('Starting voice session...');
-    isSessionActiveRef.current = true;
-    isMutedRef.current = false;
-    setIsSessionActive(true);
-    setIsMuted(false);
+    setSessionActive(true);
+    setMutedState(false);
     setStatus('listening');
 
     try {
       await startListening(handleTranscription, handlePartial);
     } catch (err) {
       console.error('Failed to start session:', err);
-      isSessionActiveRef.current = false;
-      setIsSessionActive(false);
+      setSessionActive(false);
       setStatus('idle');
     }
-  }, [startListening, handleTranscription, handlePartial]);
+  }, [startListening, handleTranscription, handlePartial, setSessionActive, setMutedState]);
 
   /**
    * Stop voice session
@@ -155,15 +163,13 @@ export function useVoiceChat() {
     if (!isSessionActiveRef.current) return;
 
     console.log('Stopping voice session...');
-    isSessionActiveRef.current = false;
-    isMutedRef.current = false;
-    setIsSessionActive(false);
-    setIsMuted(false);
+    setSessionActive(false);
+    setMutedState(false);
     setStatus('idle');
 
     stopSpeaking();
     await stopListening();
-  }, [stopListening, stopSpeaking]);
+  }, [stopListening, stopSpeaking, setSessionActive, setMutedState]);
 
   /**
    * Toggle session (start/stop)
@@ -185,19 +191,17 @@ export function useVoiceChat() {
     if (isMutedRef.current) {
       // Unmute - resume listening
       await resumeListening();
-      isMutedRef.current = false;
-      setIsMuted(false);
+      setMutedState(false);
       setStatus('listening');
       console.log('Unmuted');
     } else {
       // Mute - pause listening
       await pauseListening();
-      isMutedRef.current = true;
-      setIsMuted(true);
-      setStatus('listening');
+      setMutedState(true);
+      setStatus('muted');
       console.log('Muted');
     }
-  }, [pauseListening, resumeListening]);
+  }, [pauseListening, resumeListening, setMutedState]);
 
   return {
     // State

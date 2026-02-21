@@ -31,8 +31,40 @@ export function useSpeechService() {
 
   // Callbacks
   const onTranscriptionRef = useRef(null);
-  const onResponseRef = useRef(null);
   const onPartialRef = useRef(null);
+
+  /** Update isSpeaking state and ref together */
+  const setSpeaking = useCallback((val) => {
+    setIsSpeaking(val);
+    isSpeakingRef.current = val;
+  }, []);
+
+  /** Clean up mic analyser and stream */
+  const cleanupMicAnalyser = () => {
+    if (analyserRef.current) {
+      try { analyserRef.current.disconnect(); } catch (e) {}
+      analyserRef.current = null;
+    }
+    if (micStreamRef.current) {
+      micStreamRef.current.getTracks().forEach(t => t.stop());
+      micStreamRef.current = null;
+    }
+    frequencyDataRef.current = null;
+  };
+
+  /** Get or create a shared AudioContext, resuming if suspended. */
+  const getOrCreateAudioContext = useCallback(async () => {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return null;
+
+    if (!audioContextRef.current) {
+      audioContextRef.current = new AudioCtx();
+    }
+    if (audioContextRef.current.state === 'suspended') {
+      await audioContextRef.current.resume();
+    }
+    return audioContextRef.current;
+  }, []);
 
   /**
    * Unlock audio playback on iOS Safari.
@@ -41,27 +73,19 @@ export function useSpeechService() {
    */
   const unlockAudio = useCallback(async () => {
     try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return;
-
-      if (!audioContextRef.current) {
-        audioContextRef.current = new AudioCtx();
-      }
-
-      if (audioContextRef.current.state === 'suspended') {
-        await audioContextRef.current.resume();
-      }
+      const ctx = await getOrCreateAudioContext();
+      if (!ctx) return;
 
       // Play a silent buffer to fully unlock audio on iOS
-      const buffer = audioContextRef.current.createBuffer(1, 1, 22050);
-      const source = audioContextRef.current.createBufferSource();
+      const buffer = ctx.createBuffer(1, 1, 22050);
+      const source = ctx.createBufferSource();
       source.buffer = buffer;
-      source.connect(audioContextRef.current.destination);
+      source.connect(ctx.destination);
       source.start(0);
     } catch (e) {
       console.log('Audio unlock skipped:', e.message);
     }
-  }, []);
+  }, [getOrCreateAudioContext]);
 
   /**
    * Get speech token from backend (keeps API key secure)
@@ -159,21 +183,16 @@ export function useSpeechService() {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         micStreamRef.current = stream;
 
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!audioContextRef.current) {
-          audioContextRef.current = new AudioCtx();
+        const ctx = await getOrCreateAudioContext();
+        if (ctx) {
+          const source = ctx.createMediaStreamSource(stream);
+          const analyser = ctx.createAnalyser();
+          analyser.fftSize = 128; // 64 frequency bins
+          analyser.smoothingTimeConstant = 0.4;
+          source.connect(analyser);
+          analyserRef.current = analyser;
+          frequencyDataRef.current = new Uint8Array(analyser.frequencyBinCount);
         }
-        if (audioContextRef.current.state === 'suspended') {
-          await audioContextRef.current.resume();
-        }
-
-        const source = audioContextRef.current.createMediaStreamSource(stream);
-        const analyser = audioContextRef.current.createAnalyser();
-        analyser.fftSize = 128; // 64 frequency bins
-        analyser.smoothingTimeConstant = 0.4;
-        source.connect(analyser);
-        analyserRef.current = analyser;
-        frequencyDataRef.current = new Uint8Array(analyser.frequencyBinCount);
       } catch (micErr) {
         console.log('Mic analyser setup skipped:', micErr.message);
       }
@@ -183,7 +202,7 @@ export function useSpeechService() {
       setError(err.message);
       recognizerRef.current = null;
     }
-  }, [createSpeechConfig, unlockAudio]);
+  }, [createSpeechConfig, unlockAudio, getOrCreateAudioContext]);
 
   /**
    * Stop speech recognition
@@ -200,16 +219,7 @@ export function useSpeechService() {
       console.error('Error stopping recognition:', err);
     }
 
-    // Clean up mic analyser
-    if (analyserRef.current) {
-      try { analyserRef.current.disconnect(); } catch (e) {}
-      analyserRef.current = null;
-    }
-    if (micStreamRef.current) {
-      micStreamRef.current.getTracks().forEach(t => t.stop());
-      micStreamRef.current = null;
-    }
-    frequencyDataRef.current = null;
+    cleanupMicAnalyser();
 
     recognizerRef.current = null;
     setIsListening(false);
@@ -268,8 +278,7 @@ export function useSpeechService() {
     }
 
     try {
-      setIsSpeaking(true);
-      isSpeakingRef.current = true;
+      setSpeaking(true);
 
       const speechConfig = await createSpeechConfig();
 
@@ -288,8 +297,7 @@ export function useSpeechService() {
           if (resolved) return;
           resolved = true;
           speakResolveRef.current = null;
-          setIsSpeaking(false);
-          isSpeakingRef.current = false;
+          setSpeaking(false);
           resolve();
         };
 
@@ -344,10 +352,9 @@ export function useSpeechService() {
         setError(err.message);
       }
     } finally {
-      setIsSpeaking(false);
-      isSpeakingRef.current = false;
+      setSpeaking(false);
     }
-  }, [createSpeechConfig]);
+  }, [createSpeechConfig, setSpeaking]);
 
   /**
    * Stop current speech immediately (for interruption)
@@ -377,30 +384,13 @@ export function useSpeechService() {
       speakResolveRef.current = null;
     }
 
-    setIsSpeaking(false);
-    isSpeakingRef.current = false;
-  }, []);
+    setSpeaking(false);
+  }, [setSpeaking]);
 
-  /**
-   * Check if interrupted (to cancel ongoing operations)
-   */
-  const wasInterrupted = useCallback(() => {
-    return isInterruptedRef.current;
-  }, []);
-
-  /**
-   * Clear interrupted flag (call when starting to process a new message)
-   */
-  const clearInterrupted = useCallback(() => {
-    isInterruptedRef.current = false;
-  }, []);
-
-  /**
-   * Check if currently speaking (for interruption detection)
-   */
-  const checkIsSpeaking = useCallback(() => {
-    return isSpeakingRef.current;
-  }, []);
+  // Ref accessors — refs needed because these are called from async closures where state would be stale
+  const wasInterrupted = useCallback(() => isInterruptedRef.current, []);
+  const clearInterrupted = useCallback(() => { isInterruptedRef.current = false; }, []);
+  const checkIsSpeaking = useCallback(() => isSpeakingRef.current, []);
 
   /**
    * Send text to backend for AI response
@@ -471,12 +461,7 @@ export function useSpeechService() {
       if (playerRef.current) {
         try { playerRef.current.close(); } catch (e) {}
       }
-      if (analyserRef.current) {
-        try { analyserRef.current.disconnect(); } catch (e) {}
-      }
-      if (micStreamRef.current) {
-        micStreamRef.current.getTracks().forEach(t => t.stop());
-      }
+      cleanupMicAnalyser();
       if (audioContextRef.current) {
         try { audioContextRef.current.close(); } catch (e) {}
       }

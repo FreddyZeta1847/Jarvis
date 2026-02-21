@@ -58,6 +58,7 @@ function RobotAvatar({ isSessionActive, status, isListening, isSpeaking, isMuted
     if (!isSessionActive) return 'idle';
     if (isSpeaking || status === 'speaking') return 'speaking';
     if (status === 'processing') return 'processing';
+    if (status === 'muted') return 'active';
     if (isListening || status === 'listening') return 'listening';
     return 'active';
   };
