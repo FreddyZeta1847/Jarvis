@@ -6,6 +6,7 @@
   flex-direction: column;
   gap: 0.75rem;
   padding: 0.25rem 0 5rem;
+  animation: pageIn 0.25s ease;
 }
 
 /* Period filter pills */
@@ -126,32 +127,25 @@
   background: rgba(0, 0, 0, 0.4);
   z-index: 100;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
+  padding: 1.5rem;
   animation: overlayFadeIn 0.15s ease;
 }
 
 .day-detail-sheet {
   width: 100%;
-  max-width: 500px;
+  max-width: 400px;
   max-height: 60vh;
   background: var(--bg-glass);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--border-glass);
-  border-radius: 20px 20px 0 0;
-  padding: 0.5rem 1.2rem 1.5rem;
+  border-radius: 16px;
+  padding: 1.2rem;
   display: flex;
   flex-direction: column;
-  animation: sheetSlideUp 0.2s ease;
-}
-
-.day-detail-handle {
-  width: 36px;
-  height: 4px;
-  background: var(--border-glass-strong, rgba(255,255,255,0.15));
-  border-radius: 2px;
-  margin: 0 auto 0.75rem;
+  animation: sheetPopIn 0.2s ease;
 }
 
 .day-detail-header {
@@ -244,9 +238,9 @@
   to { opacity: 1; }
 }
 
-@keyframes sheetSlideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+@keyframes sheetPopIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 /* Desktop */

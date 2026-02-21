@@ -5,6 +5,7 @@
   overflow: hidden;
   padding: 0 1rem;
   position: relative;
+  animation: pageIn 0.25s ease;
 }
 
 /* Header */

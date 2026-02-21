@@ -12,6 +12,12 @@
   flex-direction: column;
 }
 
+/* Page transition */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* Model Page - centered layout */
 .model-page {
   flex: 1;
@@ -21,6 +27,7 @@
   padding: 0.5rem 1rem 0;
   overflow: hidden;
   position: relative;
+  animation: pageIn 0.25s ease;
 }
 
 /* ============================================

@@ -5,6 +5,7 @@
   overflow: hidden;
   padding: 0 1rem;
   position: relative;
+  animation: pageIn 0.25s ease;
 }
 
 /* ── Month header ── */
@@ -88,7 +89,7 @@
   border: none;
   background: #162a45;
   color: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(17, 109, 230, 0.15);
+  border: 2px solid #162a45;
   font-size: 0.85rem;
   font-weight: 600;
   font-family: inherit;
@@ -107,6 +108,7 @@
 
 .calendar-day.other-month {
   background: rgba(30, 58, 95, 0.15);
+  border: 2px solid rgba(30, 58, 95, 0.15);
   color: rgba(255, 255, 255, 0.12);
   cursor: default;
   pointer-events: none;
@@ -119,7 +121,7 @@
 }
 
 .calendar-day.selected {
-  background: rgba(17, 109, 230, 0.25);
+  /* background: rgba(17, 109, 230, 0.25);*/
   border-color: var(--accent);
 }
 

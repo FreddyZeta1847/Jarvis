@@ -297,7 +297,6 @@ function ExpensesDashboard({ expenses, categories }) {
       {selectedDay && dayExpenses.length > 0 && (
         <div className="day-detail-overlay" onClick={() => setSelectedDay(null)}>
           <div className="day-detail-sheet" onClick={e => e.stopPropagation()}>
-            <div className="day-detail-handle" />
             <div className="day-detail-header">
               <span className="day-detail-date">{formatSelectedDate(selectedDay)}</span>
               <span className="day-detail-total">

@@ -6,8 +6,8 @@
  * 1. User taps robot → start session (wake up)
  * 2. User speaks → Azure STT recognizes text
  * 3. Text sent to backend → AI responds
- * 4. Azure TTS speaks response
- * 5. User can interrupt anytime
+ * 4. Azure TTS speaks response (mic paused to prevent echo)
+ * 5. Mic resumes after TTS finishes → ready for next input
  * 6. User taps robot again → stop session (sleep)
  * 7. Mic button toggles mute/unmute during active session
  */
@@ -24,6 +24,7 @@ export function useVoiceChat() {
 
   const isSessionActiveRef = useRef(false);
   const isMutedRef = useRef(false);
+  const isProcessingRef = useRef(false);
 
   const {
     isListening,
@@ -36,7 +37,6 @@ export function useVoiceChat() {
     resumeListening,
     speak,
     stopSpeaking,
-    checkIsSpeaking,
     wasInterrupted,
     clearInterrupted,
     getAIResponse,
@@ -69,72 +69,74 @@ export function useVoiceChat() {
    * Handle when speech is recognized
    */
   const handleTranscription = useCallback(async (text) => {
-    console.log('Transcription:', text);
-    setLastTranscription(text);
-    setStatus('processing');
+    // Guard: prevent concurrent calls (e.g. echo recognition on iPhone)
+    if (isProcessingRef.current) return;
+    isProcessingRef.current = true;
 
-    // Reset interrupted flag - this is a new message
-    clearInterrupted();
+    try {
+      console.log('Transcription:', text);
+      setLastTranscription(text);
+      setStatus('processing');
 
-    // Add user message to chat
-    addMessage({
-      role: 'user',
-      content: text
-    });
+      // Reset interrupted flag - this is a new message
+      clearInterrupted();
 
-    // Get AI response
-    const response = await getAIResponse(text);
+      // Add user message to chat
+      addMessage({
+        role: 'user',
+        content: text
+      });
 
-    // Check if interrupted during processing - don't speak if so
-    if (wasInterrupted()) {
-      // Still show the response in chat even if we skip speaking
-      if (response) {
+      // Get AI response
+      const response = await getAIResponse(text);
+
+      // Check if interrupted during processing (session stopped) - don't speak if so
+      if (wasInterrupted()) {
+        // Still show the response in chat even if we skip speaking
+        if (response) {
+          addMessage({
+            role: 'assistant',
+            content: response.text,
+            agent: response.agent
+          });
+        }
+        setStatus('listening');
+        return;
+      }
+
+      if (response && isSessionActiveRef.current) {
+        // Add assistant message to chat
         addMessage({
           role: 'assistant',
           content: response.text,
           agent: response.agent
         });
+        setActiveAgent(response.agent);
+
+        // Mute mic during TTS to prevent echo (especially on iPhone)
+        await pauseListening();
+
+        // Speak the response
+        setStatus('speaking');
+        await speak(response.text);
+
+        // Resume mic after TTS finishes
+        if (isSessionActiveRef.current && !wasInterrupted()) {
+          await resumeListening();
+          setStatus('listening');
+        }
       }
-      setStatus('listening');
-      return;
-    }
-
-    if (response && isSessionActiveRef.current) {
-      // Add assistant message to chat
-      addMessage({
-        role: 'assistant',
-        content: response.text,
-        agent: response.agent
-      });
-      setActiveAgent(response.agent);
-
-      // Mute mic during TTS to prevent echo self-interruption (especially on iPhone)
-      await pauseListening();
-
-      // Speak the response (can be interrupted)
-      setStatus('speaking');
-      await speak(response.text);
-
-      // Resume mic after TTS finishes
-      if (isSessionActiveRef.current && !wasInterrupted()) {
-        await resumeListening();
-        setStatus('listening');
-      }
+    } finally {
+      isProcessingRef.current = false;
     }
   }, [addMessage, getAIResponse, speak, setActiveAgent, wasInterrupted, clearInterrupted, pauseListening, resumeListening]);
 
   /**
-   * Handle partial transcription (while speaking)
+   * Handle partial transcription (live preview while user speaks)
    */
   const handlePartial = useCallback((text) => {
-    // If user starts speaking while bot is talking, interrupt
-    if (checkIsSpeaking()) {
-      console.log('User interrupted - stopping TTS');
-      stopSpeaking();
-      setStatus('listening');
-    }
     setLastTranscription(text);
-  }, [checkIsSpeaking, stopSpeaking]);
+  }, []);
 
   /**
    * Start voice session
@@ -166,6 +168,7 @@ export function useVoiceChat() {
     setSessionActive(false);
     setMutedState(false);
     setStatus('idle');
+    isProcessingRef.current = false;
 
     stopSpeaking();
     await stopListening();
