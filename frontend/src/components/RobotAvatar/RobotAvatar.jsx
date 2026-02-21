@@ -143,7 +143,7 @@ function RobotAvatar({ isSessionActive, status, isListening, isSpeaking, isMuted
         rafRef.current = null;
       }
     };
-  }, [isVoiceActive, getFrequencyData, getBaseRadius]);
+  }, [isVoiceActive, isMuted, getFrequencyData, getBaseRadius]);
 
   const svgSize = (getBaseRadius() + DISPLACEMENT_SCALE + 2) * 2;
 
