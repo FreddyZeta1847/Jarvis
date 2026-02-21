@@ -21,7 +21,7 @@ function FolderCard({ folder, onOpen, onEdit, onDelete }) {
           <span className="folder-card-meta">
             {folder.expenseCount || 0} expense{folder.expenseCount !== 1 ? 's' : ''}
             {' \u00B7 '}
-            {(folder.totalAmount || 0).toFixed(2)} EUR
+            {(folder.total || 0).toFixed(2)} EUR
           </span>
         </div>
       </div>
