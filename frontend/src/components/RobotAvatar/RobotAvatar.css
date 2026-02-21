@@ -79,6 +79,12 @@
   animation: led-breathe-active 1s ease-in-out infinite;
 }
 
+/* Hide CSS ring when SVG waveform is active */
+.led-ring.hidden {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
 @keyframes led-breathe {
   0%, 100% { opacity: 0.5; }
   50% { opacity: 0.8; }
@@ -87,6 +93,28 @@
 @keyframes led-breathe-active {
   0%, 100% { opacity: 0.85; }
   50% { opacity: 1; }
+}
+
+/* SVG Waveform Ring */
+.waveform-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.waveform-path {
+  transition: stroke 0.4s ease;
+}
+
+.waveform-ring.listening .waveform-path {
+  stroke: #fb923c;
+}
+
+.waveform-ring.speaking .waveform-path {
+  stroke: #60a5fa;
 }
 
 /* Robot Face - glass sphere */

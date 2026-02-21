@@ -55,6 +55,7 @@ function HomePage() {
                     isListening={voiceChat.isListening}
                     isSpeaking={voiceChat.isSpeaking}
                     onClick={voiceChat.toggleSession}
+                    getFrequencyData={voiceChat.getFrequencyData}
                   />
                 </div>
               </>

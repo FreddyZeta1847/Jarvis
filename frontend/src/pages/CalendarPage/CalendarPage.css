@@ -82,8 +82,8 @@
 /* ── Day cell ── */
 .calendar-day {
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   border: none;
   background: #162a45;
@@ -335,9 +335,9 @@
 .hour-label {
   width: 48px;
   flex-shrink: 0;
-  font-size: 0.7rem;
-  font-weight: 500;
-  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
   text-align: right;
   padding-right: 10px;
   transform: translateY(-50%);
@@ -347,7 +347,7 @@
 .hour-line {
   flex: 1;
   height: 1px;
-  background: var(--border-glass);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 /* ── Event blocks ── */

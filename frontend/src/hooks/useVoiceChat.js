@@ -39,7 +39,8 @@ export function useVoiceChat() {
     checkIsSpeaking,
     wasInterrupted,
     clearInterrupted,
-    getAIResponse
+    getAIResponse,
+    getFrequencyData
   } = useSpeechService();
 
   const { addMessage, setIsListening: setAppListening, setIsSpeaking: setAppSpeaking, setActiveAgent } = useApp();
@@ -209,6 +210,9 @@ export function useVoiceChat() {
     startSession,
     stopSession,
     toggleSession,
-    toggleMute
+    toggleMute,
+
+    // Audio
+    getFrequencyData
   };
 }

@@ -25,6 +25,9 @@ export function useSpeechService() {
   const isInterruptedRef = useRef(false);  // Flag to cancel ongoing operations
   const speakResolveRef = useRef(null);  // Resolve function for speak() promise
   const audioContextRef = useRef(null);  // Pre-unlocked AudioContext for iOS
+  const analyserRef = useRef(null);      // AnalyserNode for mic frequency data
+  const micStreamRef = useRef(null);     // MediaStream from getUserMedia
+  const frequencyDataRef = useRef(null); // Reusable Uint8Array for frequency reads
 
   // Callbacks
   const onTranscriptionRef = useRef(null);
@@ -151,6 +154,30 @@ export function useSpeechService() {
       setIsListening(true);
       console.log('Started listening');
 
+      // Set up AnalyserNode for voice-reactive visualizer
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        micStreamRef.current = stream;
+
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!audioContextRef.current) {
+          audioContextRef.current = new AudioCtx();
+        }
+        if (audioContextRef.current.state === 'suspended') {
+          await audioContextRef.current.resume();
+        }
+
+        const source = audioContextRef.current.createMediaStreamSource(stream);
+        const analyser = audioContextRef.current.createAnalyser();
+        analyser.fftSize = 128; // 64 frequency bins
+        analyser.smoothingTimeConstant = 0.4;
+        source.connect(analyser);
+        analyserRef.current = analyser;
+        frequencyDataRef.current = new Uint8Array(analyser.frequencyBinCount);
+      } catch (micErr) {
+        console.log('Mic analyser setup skipped:', micErr.message);
+      }
+
     } catch (err) {
       console.error('Failed to start listening:', err);
       setError(err.message);
@@ -172,6 +199,17 @@ export function useSpeechService() {
     } catch (err) {
       console.error('Error stopping recognition:', err);
     }
+
+    // Clean up mic analyser
+    if (analyserRef.current) {
+      try { analyserRef.current.disconnect(); } catch (e) {}
+      analyserRef.current = null;
+    }
+    if (micStreamRef.current) {
+      micStreamRef.current.getTracks().forEach(t => t.stop());
+      micStreamRef.current = null;
+    }
+    frequencyDataRef.current = null;
 
     recognizerRef.current = null;
     setIsListening(false);
@@ -383,6 +421,43 @@ export function useSpeechService() {
   }, []);
 
   /**
+   * Get frequency data for voice-reactive visualizer.
+   * Returns a 64-element array when listening (real mic data) or speaking (simulated).
+   * Returns null when idle.
+   */
+  const getFrequencyData = useCallback(() => {
+    // Real mic frequency data while listening
+    if (analyserRef.current && frequencyDataRef.current) {
+      analyserRef.current.getByteFrequencyData(frequencyDataRef.current);
+      return frequencyDataRef.current;
+    }
+
+    // Simulated speech-like frequency data while speaking
+    if (isSpeakingRef.current) {
+      const now = performance.now() / 1000;
+      const bins = 64;
+      const data = new Uint8Array(bins);
+      for (let i = 0; i < bins; i++) {
+        const norm = i / bins;
+        // Speech energy concentrated in lower frequencies, tapering off
+        const envelope = Math.exp(-norm * 2.5) * 0.8 + 0.2;
+        // Layer multiple sine waves at different speeds for organic movement
+        const wave =
+          Math.sin(now * 3.2 + i * 0.4) * 0.3 +
+          Math.sin(now * 5.7 + i * 0.7) * 0.25 +
+          Math.sin(now * 1.8 + i * 0.15) * 0.2 +
+          Math.cos(now * 4.1 + i * 0.55) * 0.15 +
+          Math.sin(now * 7.3 + i * 1.1) * 0.1;
+        // Map to 0-255 range with envelope shaping
+        data[i] = Math.max(0, Math.min(255, ((wave + 1) / 2) * 200 * envelope + 30));
+      }
+      return data;
+    }
+
+    return null;
+  }, []);
+
+  /**
    * Cleanup on unmount
    */
   useEffect(() => {
@@ -395,6 +470,12 @@ export function useSpeechService() {
       }
       if (playerRef.current) {
         try { playerRef.current.close(); } catch (e) {}
+      }
+      if (analyserRef.current) {
+        try { analyserRef.current.disconnect(); } catch (e) {}
+      }
+      if (micStreamRef.current) {
+        micStreamRef.current.getTracks().forEach(t => t.stop());
       }
       if (audioContextRef.current) {
         try { audioContextRef.current.close(); } catch (e) {}
@@ -419,6 +500,7 @@ export function useSpeechService() {
     checkIsSpeaking,
     wasInterrupted,
     clearInterrupted,
-    getAIResponse
+    getAIResponse,
+    getFrequencyData
   };
 }
