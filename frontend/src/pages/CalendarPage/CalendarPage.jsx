@@ -60,6 +60,7 @@ function CalendarPage() {
   const [loading, setLoading] = useState(false);
   const [view, setView] = useState('month'); // 'month' | 'day'
   const [selectedDate, setSelectedDate] = useState(null);
+  const [previewDay, setPreviewDay] = useState(today.getDate()); // selected day in month grid
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [detailEvent, setDetailEvent] = useState(null);
@@ -88,6 +89,14 @@ function CalendarPage() {
     fetchEvents();
   }, [fetchEvents]);
 
+  // Reset previewDay to today when navigating to the current month, or 1 otherwise
+  useEffect(() => {
+    const isCurrentMonth =
+      currentMonth.getFullYear() === today.getFullYear() &&
+      currentMonth.getMonth() === today.getMonth();
+    setPreviewDay(isCurrentMonth ? today.getDate() : 1);
+  }, [currentMonth]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Map day number → event count
   const eventsByDay = useMemo(() => {
     const map = {};
@@ -101,6 +110,24 @@ function CalendarPage() {
     });
     return map;
   }, [events]);
+
+  // Events for the preview day (month view agenda)
+  const previewEvents = useMemo(() => {
+    return events
+      .filter((ev) => {
+        const dt = ev.start?.dateTime || ev.start?.date || '';
+        return parseInt(dt.slice(8, 10), 10) === previewDay;
+      })
+      .map((ev) => ({
+        ...ev,
+        color: EVENT_COLORS[ev.colorId] || DEFAULT_EVENT_COLOR,
+      }))
+      .sort((a, b) => {
+        const aTime = a.start?.dateTime || '';
+        const bTime = b.start?.dateTime || '';
+        return aTime.localeCompare(bTime);
+      });
+  }, [events, previewDay]);
 
   const timelineRef = useRef(null);
 
@@ -164,9 +191,14 @@ function CalendarPage() {
   };
 
   const handleDayClick = (day) => {
-    const date = new Date(year, month, day);
-    setSelectedDate(date);
-    setView('day');
+    if (previewDay === day) {
+      // Second tap → open full day timeline
+      const date = new Date(year, month, day);
+      setSelectedDate(date);
+      setView('day');
+    } else {
+      setPreviewDay(day);
+    }
   };
 
   const handleBackToMonth = () => {
@@ -240,10 +272,13 @@ function CalendarPage() {
   // Current month day cells
   for (let day = 1; day <= daysInMonth; day++) {
     const count = eventsByDay[day] || 0;
+    const classes = ['calendar-day'];
+    if (isToday(day)) classes.push('today');
+    if (previewDay === day && !isToday(day)) classes.push('selected');
     gridCells.push(
       <button
         key={day}
-        className={`calendar-day${isToday(day) ? ' today' : ''}`}
+        className={classes.join(' ')}
         onClick={() => handleDayClick(day)}
       >
         <span className="day-number">{day}</span>
@@ -309,11 +344,44 @@ function CalendarPage() {
             {gridCells}
           </div>
 
-          {loading && (
-            <div className="calendar-loading">
-              <p>Loading events...</p>
+          {/* Agenda for selected day */}
+          <div className="agenda-section">
+            <div className="agenda-header">
+              <span className="agenda-title">
+                {isToday(previewDay) ? 'Today' : `${MONTH_NAMES[month]} ${previewDay}`}
+              </span>
+              {previewEvents.length > 0 && (
+                <span className="agenda-count">{previewEvents.length} event{previewEvents.length !== 1 ? 's' : ''}</span>
+              )}
             </div>
-          )}
+
+            <div className="agenda-list">
+              {loading && <p className="agenda-empty">Loading...</p>}
+              {!loading && previewEvents.length === 0 && (
+                <p className="agenda-empty">No events</p>
+              )}
+              {previewEvents.map((ev) => (
+                <button
+                  key={ev.id}
+                  className="agenda-card"
+                  onClick={() => handleEventClick(ev)}
+                >
+                  <div className="agenda-card-color" style={{ backgroundColor: ev.color }} />
+                  <div className="agenda-card-info">
+                    <span className="agenda-card-name">{ev.summary || 'Untitled'}</span>
+                    <span className="agenda-card-time">
+                      {formatTime(ev.start?.dateTime)}
+                      {ev.end?.dateTime && ` - ${formatTime(ev.end.dateTime)}`}
+                      {ev.location && ` \u00B7 ${ev.location}`}
+                    </span>
+                  </div>
+                  <svg className="agenda-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 6 15 12 9 18" />
+                  </svg>
+                </button>
+              ))}
+            </div>
+          </div>
         </>
       )}
 
