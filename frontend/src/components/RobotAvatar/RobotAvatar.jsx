@@ -49,7 +49,7 @@ function buildSmoothPath(points) {
   return parts.join('');
 }
 
-function RobotAvatar({ isSessionActive, status, isListening, isSpeaking, onClick, getFrequencyData }) {
+function RobotAvatar({ isSessionActive, status, isListening, isSpeaking, isMuted, onClick, getFrequencyData }) {
   const svgPathRef = useRef(null);
   const smoothedRef = useRef(new Float32Array(NUM_POINTS));
   const rafRef = useRef(null);
@@ -63,7 +63,7 @@ function RobotAvatar({ isSessionActive, status, isListening, isSpeaking, onClick
   };
 
   const state = getState();
-  const isVoiceActive = state === 'listening' || state === 'speaking';
+  const isVoiceActive = (state === 'listening' && !isMuted) || state === 'speaking';
 
   const getBaseRadius = useCallback(() => {
     return window.innerWidth >= 768 ? BASE_RADIUS_DESKTOP : BASE_RADIUS;

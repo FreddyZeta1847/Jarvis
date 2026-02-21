@@ -54,6 +54,7 @@ function HomePage() {
                     status={voiceChat.status}
                     isListening={voiceChat.isListening}
                     isSpeaking={voiceChat.isSpeaking}
+                    isMuted={voiceChat.isMuted}
                     onClick={voiceChat.toggleSession}
                     getFrequencyData={voiceChat.getFrequencyData}
                   />

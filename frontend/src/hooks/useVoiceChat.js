@@ -97,16 +97,20 @@ export function useVoiceChat() {
       });
       setActiveAgent(response.agent);
 
+      // Mute mic during TTS to prevent echo self-interruption (especially on iPhone)
+      await pauseListening();
+
       // Speak the response (can be interrupted)
       setStatus('speaking');
       await speak(response.text);
 
-      // Back to listening if session still active and not interrupted
+      // Resume mic after TTS finishes
       if (isSessionActiveRef.current && !wasInterrupted()) {
+        await resumeListening();
         setStatus('listening');
       }
     }
-  }, [addMessage, getAIResponse, speak, setActiveAgent, wasInterrupted, clearInterrupted]);
+  }, [addMessage, getAIResponse, speak, setActiveAgent, wasInterrupted, clearInterrupted, pauseListening, resumeListening]);
 
   /**
    * Handle partial transcription (while speaking)
