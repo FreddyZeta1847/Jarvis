@@ -112,7 +112,7 @@ async def get_expense_summary(
 async def add_expense(
     amount: Annotated[float, "The expense amount"],
     description: Annotated[str, "Brief description of the expense"],
-    category: Annotated[str, "Expense category (e.g. food, transport, entertainment, bills, shopping, health)"],
+    category: Annotated[str, "Expense category: shopping, transport, food, presents, car, medical, or subscription"],
     date_str: Annotated[str | None, "Date in YYYY-MM-DD format, defaults to today"] = None,
     payment_method: Annotated[str, "Payment method (cash, card, transfer)"] = "card",
     currency: Annotated[str, "Currency code"] = "EUR",

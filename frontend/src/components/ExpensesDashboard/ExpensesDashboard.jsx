@@ -4,10 +4,10 @@ import { ResponsiveBar } from '@nivo/bar';
 import './ExpensesDashboard.css';
 
 const PERIODS = [
-  { key: '1W', days: 7 },
-  { key: '1M', days: 30 },
-  { key: '3M', days: 90 },
-  { key: 'YTD', days: null },
+  { key: '7d', label: '7 days' },
+  { key: '30d', label: '30 days' },
+  { key: '90d', label: '90 days' },
+  { key: 'YTD', label: 'YTD' },
 ];
 
 const NIVO_THEME = {
@@ -35,12 +35,25 @@ function getDateRange(periodKey) {
   const end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   let start;
 
-  if (periodKey === 'YTD') {
-    start = new Date(now.getFullYear(), 0, 1);
-  } else {
-    const config = PERIODS.find(p => p.key === periodKey);
-    start = new Date(end);
-    start.setDate(start.getDate() - config.days + 1);
+  switch (periodKey) {
+    case '7d':
+      start = new Date(end);
+      start.setDate(end.getDate() - 6);
+      break;
+    case '30d':
+      start = new Date(end);
+      start.setDate(end.getDate() - 29);
+      break;
+    case '90d':
+      start = new Date(end);
+      start.setDate(end.getDate() - 89);
+      break;
+    case 'YTD':
+      start = new Date(end.getFullYear(), 0, 1);
+      break;
+    default:
+      start = new Date(end);
+      start.setDate(end.getDate() - 29);
   }
 
   return { start, end };
@@ -80,7 +93,7 @@ function CenteredMetric({ centerX, centerY, total }) {
 }
 
 function ExpensesDashboard({ expenses, categories, hidePeriodFilter = false }) {
-  const [period, setPeriod] = useState('1M');
+  const [period, setPeriod] = useState('30d');
   const [selectedDay, setSelectedDay] = useState(null);
 
   const { start, end } = useMemo(() => getDateRange(period), [period]);
@@ -186,7 +199,7 @@ function ExpensesDashboard({ expenses, categories, hidePeriodFilter = false }) {
                 className={`period-pill ${period === p.key ? 'active' : ''}`}
                 onClick={() => setPeriod(p.key)}
               >
-                {p.key}
+                {p.label}
               </button>
             ))}
           </div>
@@ -209,7 +222,7 @@ function ExpensesDashboard({ expenses, categories, hidePeriodFilter = false }) {
               className={`period-pill ${period === p.key ? 'active' : ''}`}
               onClick={() => { setPeriod(p.key); setSelectedDay(null); }}
             >
-              {p.key}
+              {p.label}
             </button>
           ))}
         </div>
