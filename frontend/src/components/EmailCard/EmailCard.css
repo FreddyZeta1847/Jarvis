@@ -1,0 +1,116 @@
+.email-card {
+  display: flex;
+  align-items: stretch;
+  min-height: 68px;
+  flex-shrink: 0;
+  background: var(--bg-glass);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border-glass);
+  border-left: 3px solid transparent;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  animation: cardFadeIn 0.2s ease-out;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, transform 0.1s ease;
+}
+
+/* Unread: accent left border */
+.email-card--unread {
+  border-left-color: var(--accent);
+}
+
+.email-card:hover,
+.email-card:focus-visible {
+  background: var(--bg-glass-hover);
+  outline: none;
+}
+
+.email-card:active {
+  transform: scale(0.98);
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Main card body */
+.email-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 0.75rem 0.9rem 0.75rem 0.875rem;
+}
+
+/* Top row: sender + date */
+.email-card-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.email-sender {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.email-card--unread .email-sender {
+  font-weight: 700;
+}
+
+.email-date {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.email-card--unread .email-date {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Subject */
+.email-subject {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.email-card--unread .email-subject {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Preview snippet */
+.email-snippet {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.7;
+}

@@ -15,6 +15,7 @@ from app.api.expense_routes import router as expense_router
 from app.api.calendar_routes import router as calendar_router
 from app.api.weather_routes import router as weather_router
 from app.api.folder_routes import router as folder_router
+from app.api.gmail_routes import router as gmail_router
 
 logger = logging.getLogger("jarvis")
 
@@ -37,6 +38,7 @@ app.include_router(expense_router, prefix="/api")
 app.include_router(calendar_router, prefix="/api")
 app.include_router(weather_router, prefix="/api")
 app.include_router(folder_router, prefix="/api")
+app.include_router(gmail_router, prefix="/api")
 
 
 @app.on_event("startup")
@@ -75,6 +77,12 @@ async def startup_log():
         logger.info("Google Calendar: OK (client=%s...)", config.GOOGLE_CLIENT_ID[:20])
     else:
         logger.warning("Google Calendar: NOT CONFIGURED")
+
+    # Gmail
+    if config.GOOGLE_CLIENT_ID and config.GOOGLE_REFRESH_TOKEN:
+        logger.info("Gmail: OK (uses same Google OAuth credentials)")
+    else:
+        logger.warning("Gmail: NOT CONFIGURED")
 
     # Weather
     if config.OPENWEATHERMAP_API_KEY:

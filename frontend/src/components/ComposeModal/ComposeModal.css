@@ -1,0 +1,39 @@
+/* ComposeModal reuses modal-overlay, modal-content, modal-header, modal-form,
+   form-group, form-label, form-input, modal-close, modal-submit from ExpenseModal.css.
+   Only compose-specific overrides are defined here. */
+
+.compose-modal-content {
+  /* Allow taller sheet for the body textarea */
+  max-height: 90vh;
+}
+
+/* Body textarea */
+.compose-body {
+  height: auto;
+  min-height: 140px;
+  padding: 12px 14px;
+  resize: none;
+  line-height: 1.55;
+}
+
+/* Error state for inputs */
+.form-input--error {
+  border-color: var(--error);
+}
+
+.form-input--error:focus {
+  border-color: var(--error);
+}
+
+/* Inline error message */
+.form-error {
+  font-size: 0.72rem;
+  color: var(--error);
+  margin-top: 2px;
+}
+
+/* Read-only fields (pre-filled in reply mode) */
+.form-input[readonly] {
+  opacity: 0.65;
+  cursor: default;
+}

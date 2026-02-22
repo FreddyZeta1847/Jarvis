@@ -1,0 +1,253 @@
+.emails-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0 1rem;
+  position: relative;
+  animation: pageIn 0.25s ease;
+}
+
+.emails-page.emails-page-no-pad {
+  padding: 0;
+}
+
+/* Header */
+.emails-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0.25rem 0.5rem;
+}
+
+.emails-header-left {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.emails-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.emails-count {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+/* Search toggle button — 44px tap target */
+.search-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  background: var(--bg-glass);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+}
+
+.search-toggle-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.search-toggle-btn.active {
+  background: var(--accent);
+  color: white;
+  border-color: transparent;
+}
+
+.search-toggle-btn:not(.active):hover {
+  color: var(--text-primary);
+}
+
+/* Search bar */
+.emails-search-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  margin-bottom: 0.5rem;
+  background: var(--bg-glass);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+}
+
+.emails-search-bar .search-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  height: 36px;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Search clear — 36px tap target */
+.search-clear-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s;
+}
+
+.search-clear-btn:hover {
+  color: var(--text-primary);
+}
+
+.search-clear-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Email list */
+.emails-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.25rem 0 5rem;
+}
+
+/* Empty state */
+.emails-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2rem;
+}
+
+.emails-empty-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--text-muted);
+  opacity: 0.5;
+  margin-bottom: 0.25rem;
+}
+
+.emails-empty-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.emails-empty-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Skeleton loading cards */
+.email-skeleton {
+  display: flex;
+  min-height: 68px;
+  flex-shrink: 0;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.email-skeleton-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 0.75rem 0.9rem 0.75rem 0.875rem;
+}
+
+.email-skeleton-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.skeleton-line {
+  border-radius: 4px;
+  background: var(--border-glass);
+  animation: skeletonShimmer 1.2s ease-in-out infinite;
+}
+
+.skeleton-sender {
+  width: 40%;
+  height: 12px;
+}
+
+.skeleton-date {
+  width: 50px;
+  height: 10px;
+}
+
+.skeleton-subject {
+  width: 75%;
+  height: 11px;
+}
+
+.skeleton-snippet {
+  width: 90%;
+  height: 10px;
+  opacity: 0.5;
+}
+
+@keyframes skeletonShimmer {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+/* FAB — compose icon with safe area */
+.emails-fab {
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .emails-page {
+    padding: 0 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}

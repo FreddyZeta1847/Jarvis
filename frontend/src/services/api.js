@@ -191,4 +191,40 @@ export const api = {
     });
     if (!response.ok) throw new Error('Failed to remove expense from folder');
   },
+
+  // Emails
+  async getEmails({ q, maxResults, label } = {}) {
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    if (maxResults) params.set('max_results', String(maxResults));
+    if (label) params.set('label', label);
+    const qs = params.toString();
+    const response = await fetchWithAuth(`/api/emails${qs ? `?${qs}` : ''}`);
+    if (!response.ok) throw new Error('Failed to fetch emails');
+    return response.json();
+  },
+
+  async getEmail(id) {
+    const response = await fetchWithAuth(`/api/emails/${id}`);
+    if (!response.ok) throw new Error('Failed to fetch email');
+    return response.json();
+  },
+
+  async sendEmail({ to, subject, body }) {
+    const response = await fetchWithAuth('/api/emails', {
+      method: 'POST',
+      body: JSON.stringify({ to, subject, body }),
+    });
+    if (!response.ok) throw new Error('Failed to send email');
+    return response.json();
+  },
+
+  async replyToEmail(id, { body }) {
+    const response = await fetchWithAuth(`/api/emails/${id}/reply`, {
+      method: 'POST',
+      body: JSON.stringify({ body }),
+    });
+    if (!response.ok) throw new Error('Failed to reply to email');
+    return response.json();
+  },
 };

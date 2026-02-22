@@ -7,6 +7,7 @@ from app import config
 from app.agents.expenses_agent import create_expenses_agent
 from app.agents.calendar_agent import create_calendar_agent
 from app.agents.weather_agent import create_weather_agent
+from app.agents.gmail_agent import create_gmail_agent
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,8 @@ SYSTEM_PROMPT = (
     "delegate to the calendar tool. "
     "When the user asks anything related to weather, temperature, rain, forecast, climate, or outdoor conditions, "
     "delegate to the weather tool. "
+    "When the user asks anything related to email, gmail, inbox, messages, sending emails, or checking mail, "
+    "delegate to the gmail tool. "
     "Pass the user's full request as-is. "
     "If a specialist tool asks a clarification question, relay it naturally to the user. "
     "For all other topics, respond directly."
@@ -88,13 +91,25 @@ def _create_agent():
         arg_description="The user's weather-related request in natural language",
     )
 
-    logger.info("Orchestrator ready (tools: expenses, calendar, weather)")
+    # Create the gmail agent and wrap it as a tool for the orchestrator
+    gmail_agent = create_gmail_agent(client)
+    gmail_tool = gmail_agent.as_tool(
+        name="gmail",
+        description=(
+            "Manage Gmail: search, read, send, and reply to emails, and list recent inbox messages. "
+            "Use this for any request related to email, gmail, inbox, or messages."
+        ),
+        arg_name="request",
+        arg_description="The user's email-related request in natural language",
+    )
+
+    logger.info("Orchestrator ready (tools: expenses, calendar, weather, gmail)")
 
     return Agent(
         client=client,
         name="jarvis",
         instructions=SYSTEM_PROMPT,
-        tools=[expenses_tool, calendar_tool, weather_tool],
+        tools=[expenses_tool, calendar_tool, weather_tool, gmail_tool],
     )
 
 

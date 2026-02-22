@@ -7,6 +7,7 @@ import ChatHistory from '../../components/ChatHistory/ChatHistory.jsx';
 import ChatInput from '../../components/ChatInput/ChatInput.jsx';
 import ExpensesPage from '../ExpensesPage/ExpensesPage.jsx';
 import CalendarPage from '../CalendarPage/CalendarPage.jsx';
+import EmailsPage from '../EmailsPage/EmailsPage.jsx';
 import { useVoiceChat } from '../../hooks/useVoiceChat.js';
 import './HomePage.css';
 
@@ -102,6 +103,8 @@ function HomePage() {
         )}
 
         {activeTab === 'calendar' && <CalendarPage />}
+
+        {activeTab === 'emails' && <EmailsPage />}
 
         {activeTab === 'expenses' && <ExpensesPage />}
       </main>
