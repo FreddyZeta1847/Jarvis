@@ -29,17 +29,19 @@ function EmailsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState({});
+  const [refreshing, setRefreshing] = useState(false);
 
-  const fetchEmails = useCallback(async (q = '') => {
-    setLoading(true);
+  const fetchEmails = useCallback(async (q = '', { refresh = false } = {}) => {
+    if (!refresh) setLoading(true);
     try {
-      const data = await api.getEmails({ q, maxResults: 20 });
+      const data = await api.getEmails({ q, maxResults: 20, refresh });
       setEmails(data.emails || []);
     } catch (err) {
       console.error('Failed to load emails:', err);
       setEmails([]);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   }, []);
 
@@ -108,6 +110,12 @@ function EmailsPage() {
     }
   };
 
+  const handleRefresh = () => {
+    if (refreshing) return;
+    setRefreshing(true);
+    fetchEmails(searchQuery, { refresh: true });
+  };
+
   const CATEGORY_SECTIONS = [
     { key: 'people', label: 'People' },
     { key: 'tldr', label: 'TLDR' },
@@ -151,16 +159,30 @@ function EmailsPage() {
             {emails.length} email{emails.length !== 1 ? 's' : ''}
           </span>
         </div>
-        <button
-          className={`search-toggle-btn ${searchOpen ? 'active' : ''}`}
-          onClick={toggleSearch}
-          aria-label="Toggle search"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-        </button>
+        <div className="emails-header-actions">
+          <button
+            className={`search-toggle-btn ${refreshing ? 'refreshing' : ''}`}
+            onClick={handleRefresh}
+            disabled={refreshing}
+            aria-label="Refresh emails"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="23 4 23 10 17 10" />
+              <polyline points="1 20 1 14 7 14" />
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+            </svg>
+          </button>
+          <button
+            className={`search-toggle-btn ${searchOpen ? 'active' : ''}`}
+            onClick={toggleSearch}
+            aria-label="Toggle search"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Search bar */}

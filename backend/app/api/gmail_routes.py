@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from app.auth.jwt import get_current_user
 from app.services.gmail import get_gmail_service, _parse_message, _build_raw_message
 from app.services.email_classifier import classify_emails
+from app.services.data_cache import get_emails_cache, set_emails_cache
 
 logger = logging.getLogger(__name__)
 
@@ -37,8 +38,16 @@ async def list_emails(
     q: Optional[str] = Query(default=None, description="Gmail search query string"),
     max_results: int = Query(default=20, ge=1, le=100),
     label: str = Query(default="INBOX", description="Label to filter by"),
+    refresh: Optional[bool] = Query(default=False),
     user: dict = Depends(get_current_user),
 ):
+    # Return cached emails when not searching and not forcing refresh
+    if not q and not refresh:
+        cached = get_emails_cache()
+        if cached is not None:
+            logger.info("list_emails: returning %d cached emails", len(cached))
+            return {"emails": cached}
+
     service = get_gmail_service()
 
     try:
@@ -91,6 +100,9 @@ async def list_emails(
                         emails[0].get("category") if emails else "N/A")
         except Exception as e:
             logger.warning("Email classification failed, returning unclassified: %s", e, exc_info=True)
+
+        # Cache the classified results
+        set_emails_cache(emails)
 
     return {"emails": emails}
 

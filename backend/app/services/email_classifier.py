@@ -1,5 +1,7 @@
+import hashlib
 import json
 import logging
+import time
 
 from openai import AsyncAzureOpenAI
 
@@ -21,18 +23,33 @@ SYSTEM_PROMPT = """You are an email classifier. Classify each email into exactly
 Respond with a JSON object mapping the email number to its category.
 Example: {"1": "people", "2": "tldr", "3": "other"}"""
 
+# In-memory cache: { cache_key: { "classifications": {...}, "timestamp": float } }
+_cache = {}
+CACHE_TTL = 300  # 5 minutes
+
+
+def _make_cache_key(emails: list[dict]) -> str:
+    """Build a cache key from sorted email IDs."""
+    ids = sorted(e.get("id", "") for e in emails)
+    return hashlib.md5("|".join(ids).encode()).hexdigest()
+
 
 async def classify_emails(emails: list[dict]) -> list[dict]:
-    """Classify emails into categories using Azure OpenAI."""
+    """Classify emails into categories using Azure OpenAI (with cache)."""
     if not emails:
-        logger.info("classify_emails: no emails to classify")
         return emails
 
-    logger.info("classify_emails: classifying %d emails", len(emails))
-    logger.info("classify_emails: endpoint=%s, deployment=%s, api_version=%s",
-                AZURE_OPENAI_ENDPOINT[:30] + "..." if AZURE_OPENAI_ENDPOINT else "EMPTY",
-                AZURE_OPENAI_DEPLOYMENT or "EMPTY",
-                AZURE_OPENAI_API_VERSION or "EMPTY")
+    # Check cache
+    cache_key = _make_cache_key(emails)
+    cached = _cache.get(cache_key)
+    if cached and (time.time() - cached["timestamp"]) < CACHE_TTL:
+        logger.info("classify_emails: cache hit (%d emails)", len(emails))
+        id_to_category = cached["classifications"]
+        for email in emails:
+            email["category"] = id_to_category.get(email.get("id"), "other")
+        return emails
+
+    logger.info("classify_emails: cache miss, classifying %d emails", len(emails))
 
     lines = []
     for i, email in enumerate(emails, 1):
@@ -42,7 +59,6 @@ async def classify_emails(emails: list[dict]) -> list[dict]:
         lines.append(f"{i}. From: {sender} | Subject: {subject} | Snippet: {snippet}")
 
     user_message = "\n".join(lines)
-    logger.info("classify_emails: prompt built, %d chars", len(user_message))
 
     try:
         client = AsyncAzureOpenAI(
@@ -51,7 +67,6 @@ async def classify_emails(emails: list[dict]) -> list[dict]:
             api_version=AZURE_OPENAI_API_VERSION,
         )
 
-        logger.info("classify_emails: calling Azure OpenAI...")
         response = await client.chat.completions.create(
             model=AZURE_OPENAI_DEPLOYMENT,
             messages=[
@@ -64,14 +79,18 @@ async def classify_emails(emails: list[dict]) -> list[dict]:
         )
 
         raw = response.choices[0].message.content
-        logger.info("classify_emails: raw response = %s", raw)
         classifications = json.loads(raw)
-        logger.info("classify_emails: parsed classifications = %s", classifications)
 
+        # Map by email ID for cache storage
+        id_to_category = {}
         for i, email in enumerate(emails, 1):
-            email["category"] = classifications.get(str(i), "other")
+            cat = classifications.get(str(i), "other")
+            email["category"] = cat
+            id_to_category[email.get("id")] = cat
 
-        logger.info("classify_emails: done, categories assigned")
+        # Store in cache
+        _cache[cache_key] = {"classifications": id_to_category, "timestamp": time.time()}
+        logger.info("classify_emails: cached %d classifications", len(emails))
 
     except Exception as e:
         logger.error("Email classification failed: %s", e, exc_info=True)

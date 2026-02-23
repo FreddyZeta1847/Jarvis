@@ -193,11 +193,12 @@ export const api = {
   },
 
   // Emails
-  async getEmails({ q, maxResults, label } = {}) {
+  async getEmails({ q, maxResults, label, refresh } = {}) {
     const params = new URLSearchParams();
     if (q) params.set('q', q);
     if (maxResults) params.set('max_results', String(maxResults));
     if (label) params.set('label', label);
+    if (refresh) params.set('refresh', 'true');
     const qs = params.toString();
     const response = await fetchWithAuth(`/api/emails${qs ? `?${qs}` : ''}`);
     if (!response.ok) throw new Error('Failed to fetch emails');

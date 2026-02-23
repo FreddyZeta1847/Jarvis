@@ -8,6 +8,7 @@ import random
 from app.auth.jwt import get_current_user
 from app.database.cosmos import get_expenses_container
 from app.database.blob import upload_image, delete_image
+from app.services.data_cache import clear_expenses_cache
 
 router = APIRouter()
 
@@ -202,6 +203,7 @@ async def delete_folder(
 
     # Delete the folder document
     await container.delete_item(item=folder_id, partition_key=USER_ID)
+    clear_expenses_cache()
 
 
 @router.post("/folders/{folder_id}/expenses")
@@ -232,6 +234,7 @@ async def assign_expenses_to_folder(
         except Exception:
             pass  # Skip expenses that don't exist
 
+    clear_expenses_cache()
     return {"assignedCount": len(updated), "expenseIds": updated}
 
 
@@ -253,4 +256,5 @@ async def remove_expense_from_folder(
 
     expense.pop("folderId", None)
     await container.replace_item(item=expense_id, body=expense)
+    clear_expenses_cache()
     return {"expense": expense}

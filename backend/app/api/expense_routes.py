@@ -7,6 +7,7 @@ import random
 
 from app.auth.jwt import get_current_user
 from app.database.cosmos import get_expenses_container
+from app.services.data_cache import get_expenses_cache, set_expenses_cache, clear_expenses_cache
 
 router = APIRouter()
 
@@ -46,6 +47,14 @@ async def list_expenses(
     limit: int = Query(50, ge=1, le=200),
     user: dict = Depends(get_current_user),
 ):
+    has_filters = any([category, start_date, end_date, folder_id])
+
+    # Return cached data when no filters are applied
+    if not has_filters:
+        cached = get_expenses_cache()
+        if cached is not None:
+            return {"expenses": cached}
+
     container = await get_expenses_container()
 
     conditions = [
@@ -74,6 +83,11 @@ async def list_expenses(
         items = []
         async for item in container.query_items(query=query, parameters=params):
             items.append(item)
+
+        # Cache the unfiltered result
+        if not has_filters:
+            set_expenses_cache(items)
+
         return {"expenses": items}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -106,6 +120,7 @@ async def create_expense(
         expense["folderId"] = body.folderId
 
     await container.create_item(body=expense)
+    clear_expenses_cache()
     return {"expense": expense}
 
 
@@ -133,6 +148,7 @@ async def update_expense(
 
     item.update(updates)
     await container.replace_item(item=expense_id, body=item)
+    clear_expenses_cache()
     return {"expense": item}
 
 
@@ -147,3 +163,5 @@ async def delete_expense(
         await container.delete_item(item=expense_id, partition_key=USER_ID)
     except Exception:
         raise HTTPException(status_code=404, detail="Expense not found")
+
+    clear_expenses_cache()

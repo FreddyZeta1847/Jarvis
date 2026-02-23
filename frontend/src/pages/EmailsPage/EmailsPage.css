@@ -38,6 +38,13 @@
   color: var(--text-secondary);
 }
 
+/* Header action buttons */
+.emails-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 /* Search toggle button — 44px tap target */
 .search-toggle-btn {
   display: flex;
@@ -70,6 +77,21 @@
 
 .search-toggle-btn:not(.active):hover {
   color: var(--text-primary);
+}
+
+/* Refresh spin animation */
+.search-toggle-btn.refreshing svg {
+  animation: refreshSpin 0.8s linear infinite;
+}
+
+.search-toggle-btn.refreshing {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+@keyframes refreshSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* Search bar */
