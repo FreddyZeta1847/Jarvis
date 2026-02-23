@@ -15,8 +15,9 @@ const COLOR_OPTIONS = [
   { name: 'tomato', color: '#d50000' },
 ];
 
-function EventModal({ event, defaultDate, onSave, onClose }) {
+function EventModal({ event, defaultDate, onSave, onClose, onDelete }) {
   const isEdit = !!event;
+  const [deleting, setDeleting] = useState(false);
 
   const [form, setForm] = useState({
     name: '',
@@ -185,6 +186,28 @@ function EventModal({ event, defaultDate, onSave, onClose }) {
           >
             {saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Event'}
           </button>
+
+          {isEdit && onDelete && (
+            <button
+              type="button"
+              className="modal-delete-btn"
+              disabled={deleting}
+              onClick={async () => {
+                setDeleting(true);
+                try {
+                  await onDelete(event.id);
+                } finally {
+                  setDeleting(false);
+                }
+              }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
+              {deleting ? 'Deleting...' : 'Delete Event'}
+            </button>
+          )}
         </form>
       </div>
     </div>

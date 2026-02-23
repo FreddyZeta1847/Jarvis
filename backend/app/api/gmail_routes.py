@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 from app.auth.jwt import get_current_user
 from app.services.gmail import get_gmail_service, _parse_message, _build_raw_message
+from app.services.email_classifier import classify_emails
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +81,16 @@ async def list_emails(
             })
         except Exception as e:
             logger.warning("Failed to fetch email %s: %s", msg_ref["id"], e)
+
+    # Classify emails when not searching
+    logger.info("list_emails: q=%r, will classify=%s, email_count=%d", q, not q, len(emails))
+    if not q:
+        try:
+            emails = await classify_emails(emails)
+            logger.info("list_emails: classification done, sample category=%s",
+                        emails[0].get("category") if emails else "N/A")
+        except Exception as e:
+            logger.warning("Email classification failed, returning unclassified: %s", e, exc_info=True)
 
     return {"emails": emails}
 

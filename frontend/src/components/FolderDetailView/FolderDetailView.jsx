@@ -196,31 +196,29 @@ function FolderDetailView({
         )}
       </div>
 
-      {/* FAB with mini-menu */}
+      {/* FAB with slide-out menu */}
+      {fabOpen && (
+        <div className="folder-fab-backdrop" onClick={() => setFabOpen(false)} />
+      )}
       <div className="folder-fab-wrapper">
-        {fabOpen && (
-          <div className="folder-fab-menu">
-            <button className="folder-fab-option" onClick={handleNewExpense}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-              <span>New Expense</span>
-            </button>
-            <button className="folder-fab-option" onClick={handleAddExisting}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                <circle cx="8.5" cy="7" r="4" />
-                <line x1="20" y1="8" x2="20" y2="14" />
-                <line x1="23" y1="11" x2="17" y2="11" />
-              </svg>
-              <span>Add Existing</span>
-            </button>
-          </div>
-        )}
-        {fabOpen && (
-          <div className="folder-fab-backdrop" onClick={() => setFabOpen(false)} />
-        )}
+        <div className={`folder-fab-menu ${fabOpen ? 'open' : ''}`}>
+          <button className="folder-fab-option" onClick={handleAddExisting}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="8.5" cy="7" r="4" />
+              <line x1="20" y1="8" x2="20" y2="14" />
+              <line x1="23" y1="11" x2="17" y2="11" />
+            </svg>
+            <span>Add Existing</span>
+          </button>
+          <button className="folder-fab-option" onClick={handleNewExpense}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <span>New Expense</span>
+          </button>
+        </div>
         <button
           className={`fab-add folder-fab-main ${fabOpen ? 'fab-active' : ''}`}
           onClick={() => setFabOpen(!fabOpen)}

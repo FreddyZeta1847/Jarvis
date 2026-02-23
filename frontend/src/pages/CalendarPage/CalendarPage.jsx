@@ -212,7 +212,8 @@ function CalendarPage() {
   };
 
   const handleEventClick = (ev) => {
-    setDetailEvent(ev);
+    setEditingEvent(ev);
+    setModalOpen(true);
   };
 
   const handleCloseDetail = () => {
@@ -537,6 +538,12 @@ function CalendarPage() {
               : undefined
           }
           onSave={handleSave}
+          onDelete={async (eventId) => {
+            await api.deleteCalendarEvent(eventId);
+            setModalOpen(false);
+            setEditingEvent(null);
+            fetchEvents();
+          }}
           onClose={() => { setModalOpen(false); setEditingEvent(null); }}
         />
       )}

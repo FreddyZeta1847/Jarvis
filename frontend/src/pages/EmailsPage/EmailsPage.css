@@ -242,6 +242,98 @@
   bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
 }
 
+/* Collapsible email category sections */
+.email-category-section {
+  margin-bottom: 1rem;
+}
+
+.email-category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.875rem;
+  background: var(--bg-glass);
+  border-left: 3px solid var(--category-color);
+  border-top: 1px solid var(--border-glass);
+  border-right: 1px solid var(--border-glass);
+  border-bottom: 1px solid var(--border-glass);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border-radius: 12px;
+  cursor: pointer;
+  min-height: 44px;
+  margin-bottom: 0.5rem;
+  transition: background 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.email-category-header:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Per-category colors */
+.email-category-section[data-category="people"] { --category-color: #6b9eff; }
+.email-category-section[data-category="tldr"]   { --category-color: #a78bfa; }
+.email-category-section[data-category="other"]  { --category-color: #64748b; }
+
+.email-category-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--category-color);
+}
+
+.email-category-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.email-category-count {
+  font-size: 0.75rem;
+  color: var(--category-color);
+  background: color-mix(in srgb, var(--category-color) 12%, transparent);
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.email-category-chevron {
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+  transform: rotate(0deg);
+}
+
+.email-category-chevron.collapsed {
+  transform: rotate(-90deg);
+}
+
+.email-category-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow: hidden;
+  transition: max-height 0.25s ease, opacity 0.2s ease;
+  max-height: 2000px;
+  opacity: 1;
+}
+
+.email-category-items.collapsed {
+  max-height: 0;
+  opacity: 0;
+  margin: 0;
+}
+
+/* Category color on email cards within sections */
+.email-category-section .email-card {
+  border-left: 3px solid color-mix(in srgb, var(--category-color) 40%, transparent);
+}
+
+.email-category-section .email-card--unread {
+  border-left-color: var(--category-color);
+}
+
 /* Desktop */
 @media (min-width: 768px) {
   .emails-page {

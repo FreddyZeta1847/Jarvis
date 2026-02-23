@@ -28,6 +28,7 @@ function EmailsPage() {
   const [replyTo, setReplyTo] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
+  const [collapsedSections, setCollapsedSections] = useState({});
 
   const fetchEmails = useCallback(async (q = '') => {
     setLoading(true);
@@ -95,6 +96,10 @@ function EmailsPage() {
     setSearchOpen(false);
   };
 
+  const toggleSection = (category) => {
+    setCollapsedSections(prev => ({ ...prev, [category]: !prev[category] }));
+  };
+
   const toggleSearch = () => {
     if (searchOpen) {
       handleClearSearch();
@@ -102,6 +107,19 @@ function EmailsPage() {
       setSearchOpen(true);
     }
   };
+
+  const CATEGORY_SECTIONS = [
+    { key: 'people', label: 'People' },
+    { key: 'tldr', label: 'TLDR' },
+    { key: 'other', label: 'Other' },
+  ];
+
+  const groupedEmails = CATEGORY_SECTIONS.map(section => ({
+    ...section,
+    emails: emails.filter(e => e.category === section.key),
+  })).filter(section => section.emails.length > 0);
+
+  const hasCategories = emails.length > 0 && emails.some(e => e.category);
 
   // Detail view
   if (selectedEmail !== null) {
@@ -190,13 +208,41 @@ function EmailsPage() {
             <p className="emails-empty-subtitle">{searchQuery ? 'Try a different search query' : 'New emails will appear here'}</p>
           </div>
         ) : (
-          emails.map((email) => (
-            <EmailCard
-              key={email.id}
-              email={email}
-              onClick={handleEmailClick}
-            />
-          ))
+          (searchQuery || !hasCategories) ? (
+            emails.map((email) => (
+              <EmailCard key={email.id} email={email} onClick={handleEmailClick} />
+            ))
+          ) : (
+            groupedEmails.map(({ key, label, emails: sectionEmails }) => (
+              <div key={key} className="email-category-section" data-category={key}>
+                <div
+                  className="email-category-header"
+                  onClick={() => toggleSection(key)}
+                >
+                  <span className="email-category-name">{label}</span>
+                  <div className="email-category-right">
+                    <span className="email-category-count">{sectionEmails.length}</span>
+                    <svg
+                      className={`email-category-chevron ${collapsedSections[key] ? 'collapsed' : ''}`}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </div>
+                </div>
+                <div className={`email-category-items ${collapsedSections[key] ? 'collapsed' : ''}`}>
+                  {sectionEmails.map((email) => (
+                    <EmailCard key={email.id} email={email} onClick={handleEmailClick} />
+                  ))}
+                </div>
+              </div>
+            ))
+          )
         )}
       </div>
 

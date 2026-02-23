@@ -175,39 +175,39 @@
 }
 
 /* FAB mini-menu */
+.folder-fab-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+}
+
 .folder-fab-wrapper {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
   z-index: 10;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  flex-direction: row;
+  align-items: center;
   gap: 0.5rem;
-}
-
-.folder-fab-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
 }
 
 .folder-fab-menu {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 0.4rem;
-  animation: fabMenuIn 0.15s ease-out;
+  overflow: hidden;
+  max-width: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: max-width 0.25s ease, opacity 0.2s ease;
 }
 
-@keyframes fabMenuIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.folder-fab-menu.open {
+  max-width: 320px;
+  opacity: 1;
+  pointer-events: auto;
+  margin-right: 0.25rem;
 }
 
 .folder-fab-option {
@@ -240,7 +240,11 @@
   flex-shrink: 0;
 }
 
-.folder-fab-main {
+.folder-fab-wrapper .folder-fab-main.fab-add {
+  position: relative;
+  bottom: auto;
+  right: auto;
+  flex-shrink: 0;
   transition: transform 0.2s;
 }
 
