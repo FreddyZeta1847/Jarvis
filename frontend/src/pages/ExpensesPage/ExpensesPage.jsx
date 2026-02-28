@@ -7,6 +7,7 @@ import FolderCard from '../../components/FolderCard/FolderCard.jsx';
 import FolderModal from '../../components/FolderModal/FolderModal.jsx';
 import FolderDetailView from '../../components/FolderDetailView/FolderDetailView.jsx';
 import AddToFolderModal from '../../components/AddToFolderModal/AddToFolderModal.jsx';
+import { useSwipe } from '../../hooks/useSwipe.js';
 import './ExpensesPage.css';
 
 const CATEGORIES = {
@@ -33,6 +34,19 @@ function ExpensesPage() {
   const [folderModalOpen, setFolderModalOpen] = useState(false);
   const [editingFolder, setEditingFolder] = useState(null);
   const [addToFolderModalOpen, setAddToFolderModalOpen] = useState(false);
+
+  const VIEWS = ['list', 'dashboard', 'folders'];
+
+  const expensesSwipe = useSwipe({
+    onSwipeLeft: () => setView((v) => {
+      const i = VIEWS.indexOf(v);
+      return i < VIEWS.length - 1 ? VIEWS[i + 1] : v;
+    }),
+    onSwipeRight: () => setView((v) => {
+      const i = VIEWS.indexOf(v);
+      return i > 0 ? VIEWS[i - 1] : v;
+    }),
+  });
 
   const fetchExpenses = useCallback(async () => {
     setLoading(true);
@@ -261,7 +275,7 @@ function ExpensesPage() {
   }
 
   return (
-    <div className="expenses-page">
+    <div className="expenses-page" onTouchStart={expensesSwipe.onTouchStart} onTouchEnd={expensesSwipe.onTouchEnd}>
       {/* Header with inline view toggle */}
       <div className="expenses-header">
         <div className="expenses-header-left">

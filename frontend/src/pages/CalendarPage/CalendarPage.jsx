@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { api } from '../../services/api.js';
 import EventModal from '../../components/EventModal/EventModal.jsx';
+import { useSwipe } from '../../hooks/useSwipe.js';
 import './CalendarPage.css';
 
 const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
@@ -249,18 +250,10 @@ function CalendarPage() {
   };
 
   // Swipe to change month
-  const touchStart = useRef(null);
-  const handleTouchStart = (e) => {
-    touchStart.current = e.touches[0].clientX;
-  };
-  const handleTouchEnd = (e) => {
-    if (touchStart.current === null) return;
-    const diff = e.changedTouches[0].clientX - touchStart.current;
-    touchStart.current = null;
-    if (Math.abs(diff) < 50) return; // ignore small swipes
-    if (diff > 0) goToPrevMonth();
-    else goToNextMonth();
-  };
+  const monthSwipe = useSwipe({
+    onSwipeLeft: goToNextMonth,
+    onSwipeRight: goToPrevMonth,
+  });
 
   const isToday = (day) => {
     return (
@@ -357,8 +350,8 @@ function CalendarPage() {
           {/* Day grid */}
           <div
             className="calendar-grid"
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
+            onTouchStart={monthSwipe.onTouchStart}
+            onTouchEnd={monthSwipe.onTouchEnd}
           >
             {gridCells}
           </div>

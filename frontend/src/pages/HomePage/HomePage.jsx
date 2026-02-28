@@ -10,6 +10,7 @@ import CalendarPage from '../CalendarPage/CalendarPage.jsx';
 import EmailsPage from '../EmailsPage/EmailsPage.jsx';
 import ThemePicker from '../../components/ThemePicker/ThemePicker.jsx';
 import { useVoiceChat } from '../../hooks/useVoiceChat.js';
+import { useSwipe } from '../../hooks/useSwipe.js';
 import './HomePage.css';
 
 function HomePage() {
@@ -19,6 +20,11 @@ function HomePage() {
   const [themePickerOpen, setThemePickerOpen] = useState(false);
 
   const voiceChat = useVoiceChat();
+
+  const modelSwipe = useSwipe({
+    onSwipeLeft: () => setInteractionMode('chat'),
+    onSwipeRight: () => setInteractionMode('voice'),
+  });
 
   return (
     <div className="home-layout">
@@ -30,7 +36,7 @@ function HomePage() {
 
       <main className="home-main">
         {activeTab === 'model' && (
-          <div className="model-page">
+          <div className="model-page" onTouchStart={modelSwipe.onTouchStart} onTouchEnd={modelSwipe.onTouchEnd}>
             {interactionMode === 'voice' ? (
               <>
                 {/* Mute button - only visible during active session */}
