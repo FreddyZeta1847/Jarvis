@@ -33,7 +33,7 @@
 }
 
 .period-pill.active {
-  background: rgba(249, 115, 22, 0.15);
+  background: var(--accent-glow);
   color: var(--accent);
   border-color: var(--accent);
 }

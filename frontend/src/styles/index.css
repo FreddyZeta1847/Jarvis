@@ -26,28 +26,6 @@
   --blur: 28px;
 }
 
-/* Light theme */
-[data-theme="light"] {
-  --bg-primary: #eef2f7;
-  --bg-secondary: rgba(255, 255, 255, 0.6);
-  --bg-tertiary: rgba(226, 232, 240, 0.5);
-  --bg-glass: rgba(255, 255, 255, 0.5);
-  --bg-glass-hover: rgba(255, 255, 255, 0.7);
-  --border-glass: rgba(0, 0, 0, 0.06);
-  --border-glass-strong: rgba(0, 0, 0, 0.1);
-  --accent: #ea580c;
-  --accent-hover: #f97316;
-  --accent-glow: rgba(234, 88, 12, 0.2);
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
-  --success: #22c55e;
-  --warning: #f59e0b;
-  --error: #dc2626;
-  --info: #2563eb;
-  --blur: 24px;
-}
-
 html, body, #root {
   height: 100%;
   width: 100%;

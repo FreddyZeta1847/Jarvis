@@ -8,30 +8,24 @@ import ChatInput from '../../components/ChatInput/ChatInput.jsx';
 import ExpensesPage from '../ExpensesPage/ExpensesPage.jsx';
 import CalendarPage from '../CalendarPage/CalendarPage.jsx';
 import EmailsPage from '../EmailsPage/EmailsPage.jsx';
+import ThemePicker from '../../components/ThemePicker/ThemePicker.jsx';
 import { useVoiceChat } from '../../hooks/useVoiceChat.js';
 import './HomePage.css';
 
 function HomePage() {
   const [activeTab, setActiveTab] = useState('model');
   const [language, setLanguage] = useState('it');
-  const [theme, setTheme] = useState('dark');
   const [interactionMode, setInteractionMode] = useState('voice');
+  const [themePickerOpen, setThemePickerOpen] = useState(false);
 
   const voiceChat = useVoiceChat();
-
-  const handleThemeToggle = () => {
-    const next = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    document.documentElement.setAttribute('data-theme', next);
-  };
 
   return (
     <div className="home-layout">
       <Navbar
         language={language}
         onLanguageChange={setLanguage}
-        theme={theme}
-        onThemeToggle={handleThemeToggle}
+        onOpenThemePicker={() => setThemePickerOpen(true)}
       />
 
       <main className="home-main">
@@ -110,6 +104,10 @@ function HomePage() {
       </main>
 
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+
+      {themePickerOpen && (
+        <ThemePicker onClose={() => setThemePickerOpen(false)} />
+      )}
     </div>
   );
 }

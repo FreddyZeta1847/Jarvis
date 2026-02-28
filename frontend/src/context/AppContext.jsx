@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../services/auth';
+import { applyTheme } from '../constants/themes';
 
 const AppContext = createContext(null);
 
@@ -10,6 +11,9 @@ export function AppProvider({ children }) {
   const [activeAgent, setActiveAgent] = useState(null);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [theme, setThemeState] = useState(
+    () => localStorage.getItem('jarvis-theme') || 'jarvis'
+  );
 
   useEffect(() => {
     // Check for existing token on mount
@@ -20,12 +24,23 @@ export function AppProvider({ children }) {
     setIsLoading(false);
   }, []);
 
+  // Apply stored theme on mount
+  useEffect(() => {
+    applyTheme(theme);
+  }, []);
+
   const login = async (password) => {
     const success = await authService.login(password);
     if (success) {
       setIsAuthenticated(true);
     }
     return success;
+  };
+
+  const setTheme = (themeName) => {
+    localStorage.setItem('jarvis-theme', themeName);
+    setThemeState(themeName);
+    applyTheme(themeName);
   };
 
   const logout = () => {
@@ -57,6 +72,10 @@ export function AppProvider({ children }) {
     // Agent state
     activeAgent,
     setActiveAgent,
+
+    // Theme
+    theme,
+    setTheme,
 
     // Voice state
     isListening,

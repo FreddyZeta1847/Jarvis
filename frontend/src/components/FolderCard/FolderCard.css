@@ -99,7 +99,7 @@
 
 .folder-edit-btn:hover {
   color: var(--accent);
-  background: rgba(249, 115, 22, 0.1);
+  background: var(--accent-glow);
 }
 
 .folder-delete-btn:hover {

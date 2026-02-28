@@ -39,26 +39,26 @@
   z-index: -1;
 }
 
-/* Active state - orange ring */
+/* Active state - accent ring */
 .robot-container.active .led-ring {
-  border-color: #f97316;
-  box-shadow: 0 0 10px rgba(249, 115, 22, 0.4), inset 0 0 10px rgba(249, 115, 22, 0.2);
+  border-color: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow), inset 0 0 10px var(--accent-glow);
   animation: led-breathe-active 2s ease-in-out infinite;
 }
 
 .robot-container.active .led-ring::after {
-  box-shadow: 0 0 20px rgba(249, 115, 22, 0.25);
+  box-shadow: 0 0 20px var(--accent-glow);
 }
 
-/* Listening state - brighter orange, faster */
+/* Listening state - brighter accent, faster */
 .robot-container.listening .led-ring {
-  border-color: #fb923c;
-  box-shadow: 0 0 14px rgba(251, 146, 60, 0.5), inset 0 0 10px rgba(251, 146, 60, 0.25);
+  border-color: var(--accent-hover);
+  box-shadow: 0 0 14px var(--accent-glow), inset 0 0 10px var(--accent-glow);
   animation: led-breathe-active 1.5s ease-in-out infinite;
 }
 
 .robot-container.listening .led-ring::after {
-  box-shadow: 0 0 24px rgba(249, 115, 22, 0.3);
+  box-shadow: 0 0 24px var(--accent-glow);
 }
 
 /* Speaking state - blue / light blue */
@@ -74,8 +74,8 @@
 
 /* Processing state - subtle pulse */
 .robot-container.processing .led-ring {
-  border-color: #f97316;
-  box-shadow: 0 0 10px rgba(249, 115, 22, 0.3), inset 0 0 8px rgba(249, 115, 22, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow), inset 0 0 8px var(--accent-glow);
   animation: led-breathe-active 1s ease-in-out infinite;
 }
 
@@ -118,7 +118,7 @@
 }
 
 .waveform-ring.listening .waveform-path {
-  stroke: #fb923c;
+  stroke: var(--accent-hover);
 }
 
 .waveform-ring.speaking .waveform-path {
@@ -172,15 +172,15 @@
 .robot-container.active .robot-face {
   background: linear-gradient(
     145deg,
-    rgba(249, 115, 22, 0.1) 0%,
+    var(--accent-glow) 0%,
     rgba(255, 255, 255, 0.08) 40%,
     rgba(200, 215, 240, 0.05) 100%
   );
-  border-color: rgba(249, 115, 22, 0.18);
+  border-color: var(--accent-glow);
   box-shadow:
     inset 0 2px 6px rgba(255, 255, 255, 0.08),
     inset 0 -3px 6px rgba(0, 0, 0, 0.06),
-    0 4px 20px rgba(249, 115, 22, 0.1);
+    0 4px 20px var(--accent-glow);
 }
 
 /* Eyes */
@@ -209,14 +209,16 @@
 
 /* Active: eyes open */
 .robot-eye.active {
-  background: rgba(249, 115, 22, 0.6);
-  box-shadow: 0 0 8px rgba(249, 115, 22, 0.3);
+  background: var(--accent);
+  opacity: 0.6;
+  box-shadow: 0 0 8px var(--accent-glow);
 }
 
-/* Listening: eyes open, glowing orange */
+/* Listening: eyes open, glowing accent */
 .robot-eye.listening {
-  background: rgba(249, 115, 22, 0.8);
-  box-shadow: 0 0 10px rgba(249, 115, 22, 0.5), 0 0 20px rgba(249, 115, 22, 0.2);
+  background: var(--accent);
+  opacity: 0.8;
+  box-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow);
 }
 
 /* Speaking: eyes half open, pulsing blue */
@@ -229,13 +231,14 @@
 
 /* Processing: eyes blinking */
 .robot-eye.processing {
-  background: rgba(249, 115, 22, 0.5);
+  background: var(--accent);
+  opacity: 0.5;
   animation: eye-blink 1.2s ease-in-out infinite;
 }
 
 @keyframes eye-pulse {
-  0%, 100% { box-shadow: 0 0 8px rgba(59, 130, 246, 0.5); }
-  50% { box-shadow: 0 0 16px rgba(59, 130, 246, 0.7), 0 0 24px rgba(59, 130, 246, 0.35); }
+  0%, 100% { box-shadow: 0 0 8px var(--info); }
+  50% { box-shadow: 0 0 16px var(--info), 0 0 24px var(--info); }
 }
 
 @keyframes eye-blink {

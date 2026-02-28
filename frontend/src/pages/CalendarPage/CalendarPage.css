@@ -87,9 +87,9 @@
   height: 46px;
   border-radius: 50%;
   border: none;
-  background: #162a45;
-  color: rgba(255, 255, 255, 0.9);
-  border: 2px solid #162a45;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 2px solid var(--bg-tertiary);
   font-size: 0.85rem;
   font-weight: 600;
   font-family: inherit;
@@ -107,9 +107,9 @@
 }
 
 .calendar-day.other-month {
-  background: rgba(30, 58, 95, 0.15);
-  border: 2px solid rgba(30, 58, 95, 0.15);
-  color: rgba(255, 255, 255, 0.12);
+  background: var(--bg-glass);
+  border: 2px solid var(--bg-glass);
+  color: var(--text-muted);
   cursor: default;
   pointer-events: none;
 }
@@ -146,7 +146,7 @@
 }
 
 .calendar-day.today .event-badge {
-  background: #1e3a5f;
+  background: var(--bg-tertiary);
 }
 
 /* ══════════════════════════════
@@ -204,8 +204,8 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.7rem 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
   border-radius: 10px;
   cursor: pointer;
   text-align: left;
@@ -217,7 +217,7 @@
 
 .agenda-card:active {
   transform: scale(0.98);
-  background: rgba(17, 109, 230, 0.1);
+  background: var(--bg-glass-hover);
 }
 
 .agenda-card-color {
@@ -349,7 +349,7 @@
 .hour-line {
   flex: 1;
   height: 1px;
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--border-glass);
 }
 
 /* ── Event blocks ── */
@@ -414,7 +414,7 @@
 .event-detail {
   width: 90%;
   max-width: 380px;
-  background: var(--bg-secondary, #1a2a3f);
+  background: var(--bg-secondary);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
@@ -450,7 +450,7 @@
   height: 32px;
   border: none;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg-glass);
   color: var(--text-muted);
   display: flex;
   align-items: center;
@@ -501,7 +501,7 @@
 .event-detail-desc {
   margin-top: 0.75rem;
   padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-glass);
   border-radius: 8px;
   font-size: 0.85rem;
   color: var(--text-secondary);
@@ -542,13 +542,13 @@
 }
 
 .event-detail-btn.edit {
-  background: var(--accent, #116de6);
+  background: var(--accent);
   color: white;
 }
 
 .event-detail-btn.delete {
   background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  color: var(--error);
 }
 
 /* ── Desktop ── */

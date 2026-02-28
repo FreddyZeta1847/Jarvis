@@ -72,7 +72,7 @@
   letter-spacing: 0.3em;
   color: var(--text-primary);
   margin-bottom: 0.5rem;
-  text-shadow: 0 2px 20px rgba(249, 115, 22, 0.3);
+  text-shadow: 0 2px 20px var(--accent-glow);
 }
 
 .welcome-text p {
@@ -150,7 +150,7 @@
   height: 56px;
   padding: 1rem 1.25rem;
   font-size: 1rem;
-  background: rgba(8, 12, 22, 0.6);
+  background: var(--bg-secondary);
   border: 2px solid var(--border-glass);
   border-radius: 12px;
   color: var(--text-primary);
@@ -166,7 +166,7 @@
 .input-wrapper input:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 4px var(--accent-glow);
-  background: rgba(8, 12, 22, 0.8);
+  background: var(--bg-tertiary);
 }
 
 .input-wrapper input:disabled {
@@ -353,19 +353,3 @@
   }
 }
 
-/* ============================================
-   LIGHT THEME ADJUSTMENTS
-   ============================================ */
-
-[data-theme="light"] .input-wrapper input {
-  background: rgba(255, 255, 255, 0.7);
-}
-
-[data-theme="light"] .input-wrapper input:focus {
-  background: rgba(255, 255, 255, 0.9);
-}
-
-[data-theme="light"] .error-message {
-  background: rgba(220, 38, 38, 0.08);
-  border-color: rgba(220, 38, 38, 0.2);
-}

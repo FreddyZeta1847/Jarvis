@@ -1,0 +1,148 @@
+.theme-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: overlayFadeIn 0.15s ease-out;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.theme-picker {
+  width: 100%;
+  max-width: 440px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-glass);
+  border-radius: 20px 20px 0 0;
+  padding: 1.25rem 1.25rem 1.5rem;
+  animation: themeSlideUp 0.2s ease-out;
+}
+
+@keyframes themeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.theme-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.theme-picker-header h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.theme-picker-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: var(--bg-glass);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.theme-picker-close:hover {
+  background: var(--bg-glass-hover);
+}
+
+.theme-picker-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Grid of theme cards */
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+
+@media (min-width: 480px) {
+  .theme-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Individual theme card */
+.theme-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.5rem;
+  border: 2px solid var(--border-glass);
+  border-radius: 10px;
+  background: var(--bg-glass);
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.theme-card:active {
+  transform: scale(0.96);
+}
+
+.theme-card.active {
+  border-color: var(--accent);
+}
+
+/* Color preview bars */
+.theme-colors {
+  display: flex;
+  gap: 3px;
+  height: 28px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.theme-color-bar {
+  flex: 1;
+  border-radius: 3px;
+}
+
+.theme-card-name {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Desktop: center the modal */
+@media (min-width: 768px) {
+  .theme-overlay {
+    align-items: center;
+  }
+
+  .theme-picker {
+    border-radius: 20px;
+  }
+}
