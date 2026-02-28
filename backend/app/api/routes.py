@@ -136,10 +136,10 @@ async def chat(
     Chat endpoint - send message, get AI response.
     Protected: requires valid JWT token.
     """
-    from app.agents.orchestrator import send_message
-
     try:
+        from app.agents.orchestrator import send_message
         response_text = await send_message(request.message)
+        return MessageResponse(text=response_text, agent="jarvis")
     except Exception as e:
         import traceback
         traceback.print_exc()
@@ -147,8 +147,6 @@ async def chat(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
-
-    return MessageResponse(text=response_text, agent="jarvis")
 
 
 @router.get("/conversations")
