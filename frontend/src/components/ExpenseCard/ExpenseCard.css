@@ -1,6 +1,7 @@
 .expense-card {
   display: flex;
   align-items: stretch;
+  flex-shrink: 0;
   background: var(--bg-glass);
   backdrop-filter: blur(var(--blur));
   -webkit-backdrop-filter: blur(var(--blur));
