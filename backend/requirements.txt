@@ -15,6 +15,8 @@ aiohttp>=3.9.0
 # AI/Agents
 agent-framework-core==1.0.0b260210
 openai>=1.0.0
+# Pinned: agent-framework-core needs SpanAttributes.LLM_SYSTEM which was removed in newer versions.
+# Without this pin, Docker --pre pulls a breaking version.
 opentelemetry-semantic-conventions-ai==0.4.13
 
 # Google Calendar
