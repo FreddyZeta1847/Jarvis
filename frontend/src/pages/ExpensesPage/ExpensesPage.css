@@ -53,7 +53,9 @@
 /* Compact view toggle (icon-only, inline in header) */
 .view-toggle {
   display: flex;
-  background: var(--bg-secondary);
+  background: var(--bg-glass);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
   border: 1px solid var(--border-glass);
   border-radius: 10px;
   padding: 3px;
@@ -117,16 +119,16 @@
 
 .filter-pill {
   flex-shrink: 0;
-  padding: 0.35rem 0.9rem;
-  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
   border: 1px solid var(--border-glass);
-  background: transparent;
+  background: var(--bg-glass);
   color: var(--text-secondary);
   font-size: 0.78rem;
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  transition: all 0.2s;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -138,7 +140,6 @@
 
 .filter-pill:not(.active):hover {
   color: var(--text-primary);
-  border-color: var(--border-glass-strong);
 }
 
 /* Expense list */

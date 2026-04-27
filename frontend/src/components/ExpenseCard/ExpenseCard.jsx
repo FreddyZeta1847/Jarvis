@@ -13,15 +13,22 @@ function ExpenseCard({ expense, categoryInfo, onEdit, onDelete }) {
       <div className="expense-card-body" onClick={() => onEdit(expense)}>
         <div className="expense-card-left">
           <span className="expense-description">{expense.description}</span>
-          <span className="expense-meta">
-            <span className="expense-category-name">{categoryInfo.label}</span>
-            <span className="expense-meta-dot">·</span>
-            <span className="expense-date">{formatDate(expense.date)}</span>
+          <span className="expense-date">{formatDate(expense.date)}</span>
+        </div>
+        <div className="expense-card-right">
+          <span className="expense-amount">
+            {expense.amount.toFixed(2)} {expense.currency}
+          </span>
+          <span
+            className="expense-category-badge"
+            style={{
+              background: `${categoryInfo.color}22`,
+              color: categoryInfo.color,
+            }}
+          >
+            {categoryInfo.label}
           </span>
         </div>
-        <span className="expense-amount">
-          {expense.amount.toFixed(2)} {expense.currency}
-        </span>
       </div>
       <button
         className="expense-delete-btn"
