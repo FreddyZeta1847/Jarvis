@@ -50,6 +50,99 @@
   color: var(--text-secondary);
 }
 
+/* ── Select mode ────────────────────────────────── */
+.select-toggle-btn {
+  background: transparent;
+  border: 1px solid var(--border-glass);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.select-toggle-btn:hover,
+.select-toggle-btn:active {
+  color: var(--text-primary);
+  border-color: var(--border-glass-strong);
+}
+
+.select-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.select-cancel-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 5px 6px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.select-cancel-btn:hover,
+.select-cancel-btn:active {
+  color: var(--text-primary);
+}
+
+.select-count {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  min-width: 5.5ch;
+  text-align: center;
+}
+
+.select-all-btn,
+.select-delete-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, opacity 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+}
+
+.select-all-btn {
+  background: var(--bg-glass);
+  color: var(--text-secondary);
+}
+
+.select-all-btn:hover,
+.select-all-btn:active {
+  color: var(--text-primary);
+}
+
+.select-delete-btn {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--error);
+}
+
+.select-delete-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.select-all-btn svg,
+.select-delete-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
 /* Compact view toggle (icon-only, inline in header) */
 .view-toggle {
   display: flex;

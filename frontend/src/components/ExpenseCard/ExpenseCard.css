@@ -108,3 +108,47 @@
   width: 16px;
   height: 16px;
 }
+
+/* ── Select mode ────────────────────────────────── */
+.expense-card.selected {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--bg-glass));
+}
+
+.expense-card.select-mode .expense-card-body {
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.expense-select-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  border-left: 1px solid var(--border-glass);
+  flex-shrink: 0;
+}
+
+.expense-select-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--border-glass-strong);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.expense-select-circle.checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.expense-select-circle svg {
+  width: 14px;
+  height: 14px;
+}
