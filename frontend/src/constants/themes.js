@@ -1,5 +1,13 @@
 // 32 themes mapped to Jarvis CSS variable system
-// Each theme provides colors for glass-morphism UI
+//
+// Each theme defines its CORE colors only:
+//   - bgPrimary       : page background
+//   - surfaceTint     : 'white' (dark themes — lighten surfaces) or 'black' (light themes — darken)
+//   - accent / text / status / borders
+//
+// Surface colors (--bg-secondary, --bg-tertiary, --bg-glass, --bg-glass-hover)
+// are AUTO-COMPUTED in index.css via color-mix(bgPrimary, surfaceTint).
+// This keeps surfaces SOLID (no glass / no blur) and consistent across all themes.
 
 export const THEMES = [
   {
@@ -8,12 +16,9 @@ export const THEMES = [
     type: 'dark',
     colors: {
       bgPrimary: '#080c16',
-      bgSecondary: 'rgba(14, 20, 36, 0.55)',
-      bgTertiary: 'rgba(22, 33, 62, 0.35)',
-      bgGlass: 'rgba(16, 24, 48, 0.25)',
-      bgGlassHover: 'rgba(22, 33, 62, 0.4)',
-      borderGlass: 'rgba(255, 255, 255, 0.1)',
-      borderGlassStrong: 'rgba(255, 255, 255, 0.15)',
+      surfaceTint: 'white',
+      borderGlass: 'rgba(255, 255, 255, 0.08)',
+      borderGlassStrong: 'rgba(255, 255, 255, 0.14)',
       accent: '#f97316',
       accentHover: '#fb923c',
       accentGlow: 'rgba(249, 115, 22, 0.3)',
@@ -24,7 +29,6 @@ export const THEMES = [
       warning: '#fbbf24',
       error: '#ef4444',
       info: '#3b82f6',
-      blur: '28px',
     },
   },
   {
@@ -33,12 +37,9 @@ export const THEMES = [
     type: 'light',
     colors: {
       bgPrimary: '#ffffff',
-      bgSecondary: 'rgba(243, 244, 246, 0.7)',
-      bgTertiary: 'rgba(229, 231, 235, 0.5)',
-      bgGlass: 'rgba(255, 255, 255, 0.6)',
-      bgGlassHover: 'rgba(255, 255, 255, 0.8)',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.06)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.1)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.12)',
       accent: '#570df8',
       accentHover: '#7c3aed',
       accentGlow: 'rgba(87, 13, 248, 0.2)',
@@ -49,7 +50,6 @@ export const THEMES = [
       warning: '#f59e0b',
       error: '#dc2626',
       info: '#3b82f6',
-      blur: '24px',
     },
   },
   {
@@ -58,12 +58,9 @@ export const THEMES = [
     type: 'dark',
     colors: {
       bgPrimary: '#1d232a',
-      bgSecondary: 'rgba(30, 37, 46, 0.7)',
-      bgTertiary: 'rgba(42, 50, 60, 0.5)',
-      bgGlass: 'rgba(30, 37, 46, 0.4)',
-      bgGlassHover: 'rgba(42, 50, 60, 0.5)',
+      surfaceTint: 'white',
       borderGlass: 'rgba(255, 255, 255, 0.08)',
-      borderGlassStrong: 'rgba(255, 255, 255, 0.12)',
+      borderGlassStrong: 'rgba(255, 255, 255, 0.14)',
       accent: '#661AE6',
       accentHover: '#7c3aed',
       accentGlow: 'rgba(102, 26, 230, 0.3)',
@@ -74,7 +71,6 @@ export const THEMES = [
       warning: '#fbbf24',
       error: '#ef4444',
       info: '#3b82f6',
-      blur: '28px',
     },
   },
   {
@@ -83,12 +79,9 @@ export const THEMES = [
     type: 'light',
     colors: {
       bgPrimary: '#faf7f5',
-      bgSecondary: 'rgba(255, 255, 255, 0.7)',
-      bgTertiary: 'rgba(237, 227, 219, 0.4)',
-      bgGlass: 'rgba(255, 255, 255, 0.6)',
-      bgGlassHover: 'rgba(255, 255, 255, 0.8)',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.06)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.1)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.12)',
       accent: '#65c3c8',
       accentHover: '#7dd3d7',
       accentGlow: 'rgba(101, 195, 200, 0.25)',
@@ -99,7 +92,6 @@ export const THEMES = [
       warning: '#f59e0b',
       error: '#dc2626',
       info: '#3b82f6',
-      blur: '24px',
     },
   },
   {
@@ -107,13 +99,10 @@ export const THEMES = [
     label: 'Bumblebee',
     type: 'light',
     colors: {
-      bgPrimary: '#ffffff',
-      bgSecondary: 'rgba(255, 251, 235, 0.7)',
-      bgTertiary: 'rgba(254, 243, 199, 0.4)',
-      bgGlass: 'rgba(255, 255, 255, 0.6)',
-      bgGlassHover: 'rgba(255, 255, 255, 0.8)',
+      bgPrimary: '#fffaf0',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.06)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.1)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.12)',
       accent: '#e0a82e',
       accentHover: '#f0b840',
       accentGlow: 'rgba(224, 168, 46, 0.25)',
@@ -124,7 +113,6 @@ export const THEMES = [
       warning: '#f59e0b',
       error: '#dc2626',
       info: '#3b82f6',
-      blur: '24px',
     },
   },
   {
@@ -132,13 +120,10 @@ export const THEMES = [
     label: 'Emerald',
     type: 'light',
     colors: {
-      bgPrimary: '#ffffff',
-      bgSecondary: 'rgba(240, 253, 244, 0.7)',
-      bgTertiary: 'rgba(220, 252, 231, 0.4)',
-      bgGlass: 'rgba(255, 255, 255, 0.6)',
-      bgGlassHover: 'rgba(255, 255, 255, 0.8)',
+      bgPrimary: '#f6fbf7',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.06)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.1)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.12)',
       accent: '#66cc8a',
       accentHover: '#7dd99a',
       accentGlow: 'rgba(102, 204, 138, 0.25)',
@@ -149,7 +134,6 @@ export const THEMES = [
       warning: '#f59e0b',
       error: '#dc2626',
       info: '#377cfb',
-      blur: '24px',
     },
   },
   {
@@ -157,13 +141,10 @@ export const THEMES = [
     label: 'Corporate',
     type: 'light',
     colors: {
-      bgPrimary: '#ffffff',
-      bgSecondary: 'rgba(241, 245, 249, 0.7)',
-      bgTertiary: 'rgba(226, 232, 240, 0.5)',
-      bgGlass: 'rgba(255, 255, 255, 0.6)',
-      bgGlassHover: 'rgba(255, 255, 255, 0.8)',
+      bgPrimary: '#f8fafc',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.06)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.1)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.12)',
       accent: '#4b6bfb',
       accentHover: '#6882fc',
       accentGlow: 'rgba(75, 107, 251, 0.2)',
@@ -174,7 +155,6 @@ export const THEMES = [
       warning: '#f59e0b',
       error: '#dc2626',
       info: '#3b82f6',
-      blur: '24px',
     },
   },
   {
@@ -183,12 +163,9 @@ export const THEMES = [
     type: 'dark',
     colors: {
       bgPrimary: '#1a103c',
-      bgSecondary: 'rgba(35, 22, 75, 0.7)',
-      bgTertiary: 'rgba(50, 30, 100, 0.5)',
-      bgGlass: 'rgba(30, 18, 65, 0.4)',
-      bgGlassHover: 'rgba(45, 27, 90, 0.5)',
+      surfaceTint: 'white',
       borderGlass: 'rgba(255, 255, 255, 0.08)',
-      borderGlassStrong: 'rgba(255, 255, 255, 0.12)',
+      borderGlassStrong: 'rgba(255, 255, 255, 0.14)',
       accent: '#e779c1',
       accentHover: '#f09bd0',
       accentGlow: 'rgba(231, 121, 193, 0.3)',
@@ -199,7 +176,6 @@ export const THEMES = [
       warning: '#f3cc30',
       error: '#ef4444',
       info: '#58c7f3',
-      blur: '28px',
     },
   },
   {
@@ -208,12 +184,9 @@ export const THEMES = [
     type: 'light',
     colors: {
       bgPrimary: '#e4d8b4',
-      bgSecondary: 'rgba(228, 216, 180, 0.7)',
-      bgTertiary: 'rgba(210, 195, 155, 0.5)',
-      bgGlass: 'rgba(240, 230, 205, 0.6)',
-      bgGlassHover: 'rgba(240, 230, 205, 0.8)',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.08)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.12)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.14)',
       accent: '#ef9995',
       accentHover: '#f4b3b0',
       accentGlow: 'rgba(239, 153, 149, 0.25)',
@@ -224,7 +197,6 @@ export const THEMES = [
       warning: '#dc8850',
       error: '#dc2626',
       info: '#3b82f6',
-      blur: '24px',
     },
   },
   {
@@ -233,12 +205,9 @@ export const THEMES = [
     type: 'light',
     colors: {
       bgPrimary: '#ffee00',
-      bgSecondary: 'rgba(255, 238, 0, 0.5)',
-      bgTertiary: 'rgba(230, 210, 0, 0.4)',
-      bgGlass: 'rgba(255, 248, 140, 0.5)',
-      bgGlassHover: 'rgba(255, 248, 140, 0.7)',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.1)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.15)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.18)',
       accent: '#ff7598',
       accentHover: '#ff95b0',
       accentGlow: 'rgba(255, 117, 152, 0.3)',
@@ -249,7 +218,6 @@ export const THEMES = [
       warning: '#f59e0b',
       error: '#dc2626',
       info: '#75d1f0',
-      blur: '24px',
     },
   },
   {
@@ -258,12 +226,9 @@ export const THEMES = [
     type: 'light',
     colors: {
       bgPrimary: '#f0d6e8',
-      bgSecondary: 'rgba(255, 230, 245, 0.6)',
-      bgTertiary: 'rgba(240, 214, 232, 0.5)',
-      bgGlass: 'rgba(255, 240, 250, 0.5)',
-      bgGlassHover: 'rgba(255, 240, 250, 0.7)',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.06)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.1)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.12)',
       accent: '#e96d7b',
       accentHover: '#f08d98',
       accentGlow: 'rgba(233, 109, 123, 0.25)',
@@ -274,7 +239,6 @@ export const THEMES = [
       warning: '#f59e0b',
       error: '#dc2626',
       info: '#a991f7',
-      blur: '24px',
     },
   },
   {
@@ -283,12 +247,9 @@ export const THEMES = [
     type: 'dark',
     colors: {
       bgPrimary: '#212121',
-      bgSecondary: 'rgba(35, 35, 35, 0.7)',
-      bgTertiary: 'rgba(50, 50, 50, 0.5)',
-      bgGlass: 'rgba(40, 40, 40, 0.4)',
-      bgGlassHover: 'rgba(55, 55, 55, 0.5)',
+      surfaceTint: 'white',
       borderGlass: 'rgba(255, 255, 255, 0.08)',
-      borderGlassStrong: 'rgba(255, 255, 255, 0.12)',
+      borderGlassStrong: 'rgba(255, 255, 255, 0.14)',
       accent: '#f28c18',
       accentHover: '#f5a540',
       accentGlow: 'rgba(242, 140, 24, 0.3)',
@@ -299,7 +260,6 @@ export const THEMES = [
       warning: '#fbbf24',
       error: '#ef4444',
       info: '#6d3a9c',
-      blur: '28px',
     },
   },
   {
@@ -308,12 +268,9 @@ export const THEMES = [
     type: 'light',
     colors: {
       bgPrimary: '#e9e7e7',
-      bgSecondary: 'rgba(255, 255, 255, 0.6)',
-      bgTertiary: 'rgba(230, 228, 228, 0.5)',
-      bgGlass: 'rgba(255, 255, 255, 0.5)',
-      bgGlassHover: 'rgba(255, 255, 255, 0.7)',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.06)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.1)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.12)',
       accent: '#5c7f67',
       accentHover: '#6f957a',
       accentGlow: 'rgba(92, 127, 103, 0.25)',
@@ -324,7 +281,6 @@ export const THEMES = [
       warning: '#f59e0b',
       error: '#dc2626',
       info: '#3b82f6',
-      blur: '24px',
     },
   },
   {
@@ -333,12 +289,9 @@ export const THEMES = [
     type: 'dark',
     colors: {
       bgPrimary: '#171212',
-      bgSecondary: 'rgba(25, 20, 20, 0.7)',
-      bgTertiary: 'rgba(35, 28, 28, 0.5)',
-      bgGlass: 'rgba(28, 22, 22, 0.4)',
-      bgGlassHover: 'rgba(40, 32, 32, 0.5)',
+      surfaceTint: 'white',
       borderGlass: 'rgba(255, 255, 255, 0.08)',
-      borderGlassStrong: 'rgba(255, 255, 255, 0.12)',
+      borderGlassStrong: 'rgba(255, 255, 255, 0.14)',
       accent: '#1eb854',
       accentHover: '#38d468',
       accentGlow: 'rgba(30, 184, 84, 0.3)',
@@ -349,7 +302,6 @@ export const THEMES = [
       warning: '#fbbf24',
       error: '#ef4444',
       info: '#1db990',
-      blur: '28px',
     },
   },
   {
@@ -358,12 +310,9 @@ export const THEMES = [
     type: 'dark',
     colors: {
       bgPrimary: '#345da7',
-      bgSecondary: 'rgba(40, 70, 140, 0.6)',
-      bgTertiary: 'rgba(55, 85, 155, 0.5)',
-      bgGlass: 'rgba(45, 75, 145, 0.4)',
-      bgGlassHover: 'rgba(60, 90, 160, 0.5)',
+      surfaceTint: 'white',
       borderGlass: 'rgba(255, 255, 255, 0.12)',
-      borderGlassStrong: 'rgba(255, 255, 255, 0.18)',
+      borderGlassStrong: 'rgba(255, 255, 255, 0.2)',
       accent: '#09ecf3',
       accentHover: '#40f0f5',
       accentGlow: 'rgba(9, 236, 243, 0.3)',
@@ -374,7 +323,6 @@ export const THEMES = [
       warning: '#ffe999',
       error: '#ef4444',
       info: '#09ecf3',
-      blur: '28px',
     },
   },
   {
@@ -383,12 +331,9 @@ export const THEMES = [
     type: 'light',
     colors: {
       bgPrimary: '#ffffff',
-      bgSecondary: 'rgba(245, 245, 245, 0.7)',
-      bgTertiary: 'rgba(235, 235, 235, 0.5)',
-      bgGlass: 'rgba(250, 250, 250, 0.6)',
-      bgGlassHover: 'rgba(245, 245, 245, 0.8)',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.08)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.15)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.18)',
       accent: '#0D0D0D',
       accentHover: '#2a2a2a',
       accentGlow: 'rgba(13, 13, 13, 0.15)',
@@ -399,7 +344,6 @@ export const THEMES = [
       warning: '#f59e0b',
       error: '#dc2626',
       info: '#3b82f6',
-      blur: '24px',
     },
   },
   {
@@ -407,13 +351,10 @@ export const THEMES = [
     label: 'Pastel',
     type: 'light',
     colors: {
-      bgPrimary: '#ffffff',
-      bgSecondary: 'rgba(255, 245, 250, 0.7)',
-      bgTertiary: 'rgba(245, 235, 240, 0.5)',
-      bgGlass: 'rgba(255, 250, 252, 0.6)',
-      bgGlassHover: 'rgba(255, 250, 252, 0.8)',
+      bgPrimary: '#fef9fb',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.05)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.08)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.1)',
       accent: '#d1c1d7',
       accentHover: '#e0d4e5',
       accentGlow: 'rgba(209, 193, 215, 0.3)',
@@ -424,7 +365,6 @@ export const THEMES = [
       warning: '#fce4a8',
       error: '#f6cbd1',
       info: '#c7dbf4',
-      blur: '24px',
     },
   },
   {
@@ -432,13 +372,10 @@ export const THEMES = [
     label: 'Fantasy',
     type: 'light',
     colors: {
-      bgPrimary: '#ffffff',
-      bgSecondary: 'rgba(248, 240, 252, 0.7)',
-      bgTertiary: 'rgba(240, 228, 245, 0.5)',
-      bgGlass: 'rgba(255, 248, 255, 0.6)',
-      bgGlassHover: 'rgba(255, 248, 255, 0.8)',
+      bgPrimary: '#fbf6fc',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.06)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.1)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.12)',
       accent: '#6e0b75',
       accentHover: '#891495',
       accentGlow: 'rgba(110, 11, 117, 0.2)',
@@ -449,7 +386,6 @@ export const THEMES = [
       warning: '#f59e0b',
       error: '#dc2626',
       info: '#007ebd',
-      blur: '24px',
     },
   },
   {
@@ -458,12 +394,9 @@ export const THEMES = [
     type: 'light',
     colors: {
       bgPrimary: '#ffffff',
-      bgSecondary: 'rgba(245, 245, 245, 0.7)',
-      bgTertiary: 'rgba(235, 235, 235, 0.5)',
-      bgGlass: 'rgba(250, 250, 250, 0.6)',
-      bgGlassHover: 'rgba(245, 245, 245, 0.8)',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.1)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.2)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.22)',
       accent: '#b8b8b8',
       accentHover: '#d0d0d0',
       accentGlow: 'rgba(184, 184, 184, 0.2)',
@@ -474,7 +407,6 @@ export const THEMES = [
       warning: '#f59e0b',
       error: '#dc2626',
       info: '#3b82f6',
-      blur: '24px',
     },
   },
   {
@@ -483,12 +415,9 @@ export const THEMES = [
     type: 'dark',
     colors: {
       bgPrimary: '#000000',
-      bgSecondary: 'rgba(15, 15, 15, 0.7)',
-      bgTertiary: 'rgba(30, 30, 30, 0.5)',
-      bgGlass: 'rgba(20, 20, 20, 0.4)',
-      bgGlassHover: 'rgba(35, 35, 35, 0.5)',
+      surfaceTint: 'white',
       borderGlass: 'rgba(255, 255, 255, 0.08)',
-      borderGlassStrong: 'rgba(255, 255, 255, 0.12)',
+      borderGlassStrong: 'rgba(255, 255, 255, 0.14)',
       accent: '#343232',
       accentHover: '#4a4848',
       accentGlow: 'rgba(52, 50, 50, 0.3)',
@@ -499,7 +428,6 @@ export const THEMES = [
       warning: '#fbbf24',
       error: '#ef4444',
       info: '#3b82f6',
-      blur: '28px',
     },
   },
   {
@@ -508,12 +436,9 @@ export const THEMES = [
     type: 'dark',
     colors: {
       bgPrimary: '#09090b',
-      bgSecondary: 'rgba(18, 18, 22, 0.7)',
-      bgTertiary: 'rgba(30, 30, 38, 0.5)',
-      bgGlass: 'rgba(22, 22, 28, 0.4)',
-      bgGlassHover: 'rgba(35, 35, 42, 0.5)',
+      surfaceTint: 'white',
       borderGlass: 'rgba(255, 255, 255, 0.06)',
-      borderGlassStrong: 'rgba(255, 255, 255, 0.1)',
+      borderGlassStrong: 'rgba(255, 255, 255, 0.12)',
       accent: '#dca54c',
       accentHover: '#e6b868',
       accentGlow: 'rgba(220, 165, 76, 0.25)',
@@ -524,7 +449,6 @@ export const THEMES = [
       warning: '#dca54c',
       error: '#ef4444',
       info: '#3b82f6',
-      blur: '28px',
     },
   },
   {
@@ -533,12 +457,9 @@ export const THEMES = [
     type: 'dark',
     colors: {
       bgPrimary: '#282a36',
-      bgSecondary: 'rgba(40, 42, 54, 0.7)',
-      bgTertiary: 'rgba(55, 58, 72, 0.5)',
-      bgGlass: 'rgba(44, 46, 58, 0.4)',
-      bgGlassHover: 'rgba(58, 60, 74, 0.5)',
+      surfaceTint: 'white',
       borderGlass: 'rgba(255, 255, 255, 0.08)',
-      borderGlassStrong: 'rgba(255, 255, 255, 0.12)',
+      borderGlassStrong: 'rgba(255, 255, 255, 0.14)',
       accent: '#ff79c6',
       accentHover: '#ff9cd5',
       accentGlow: 'rgba(255, 121, 198, 0.3)',
@@ -549,7 +470,6 @@ export const THEMES = [
       warning: '#f1fa8c',
       error: '#ff5555',
       info: '#bd93f9',
-      blur: '28px',
     },
   },
   {
@@ -558,12 +478,9 @@ export const THEMES = [
     type: 'light',
     colors: {
       bgPrimary: '#ffffff',
-      bgSecondary: 'rgba(240, 248, 255, 0.7)',
-      bgTertiary: 'rgba(225, 240, 250, 0.5)',
-      bgGlass: 'rgba(245, 250, 255, 0.6)',
-      bgGlassHover: 'rgba(245, 250, 255, 0.8)',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.06)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.1)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.12)',
       accent: '#45AEEE',
       accentHover: '#65c0f5',
       accentGlow: 'rgba(69, 174, 238, 0.25)',
@@ -574,7 +491,6 @@ export const THEMES = [
       warning: '#FFC107',
       error: '#E8488A',
       info: '#45AEEE',
-      blur: '24px',
     },
   },
   {
@@ -583,12 +499,9 @@ export const THEMES = [
     type: 'light',
     colors: {
       bgPrimary: '#f1f1f1',
-      bgSecondary: 'rgba(255, 250, 245, 0.7)',
-      bgTertiary: 'rgba(240, 230, 220, 0.5)',
-      bgGlass: 'rgba(255, 252, 248, 0.6)',
-      bgGlassHover: 'rgba(255, 252, 248, 0.8)',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.06)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.1)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.12)',
       accent: '#8C0327',
       accentHover: '#a61040',
       accentGlow: 'rgba(140, 3, 39, 0.2)',
@@ -599,7 +512,6 @@ export const THEMES = [
       warning: '#f59e0b',
       error: '#dc2626',
       info: '#3b82f6',
-      blur: '24px',
     },
   },
   {
@@ -608,12 +520,9 @@ export const THEMES = [
     type: 'dark',
     colors: {
       bgPrimary: '#202020',
-      bgSecondary: 'rgba(32, 32, 32, 0.7)',
-      bgTertiary: 'rgba(45, 45, 45, 0.5)',
-      bgGlass: 'rgba(38, 38, 38, 0.4)',
-      bgGlassHover: 'rgba(50, 50, 50, 0.5)',
+      surfaceTint: 'white',
       borderGlass: 'rgba(255, 255, 255, 0.08)',
-      borderGlassStrong: 'rgba(255, 255, 255, 0.12)',
+      borderGlassStrong: 'rgba(255, 255, 255, 0.14)',
       accent: '#1C4E80',
       accentHover: '#2a6ca8',
       accentGlow: 'rgba(28, 78, 128, 0.3)',
@@ -624,7 +533,6 @@ export const THEMES = [
       warning: '#fbbf24',
       error: '#EA6947',
       info: '#1C4E80',
-      blur: '28px',
     },
   },
   {
@@ -633,12 +541,9 @@ export const THEMES = [
     type: 'light',
     colors: {
       bgPrimary: '#fafafa',
-      bgSecondary: 'rgba(255, 240, 255, 0.7)',
-      bgTertiary: 'rgba(245, 225, 245, 0.5)',
-      bgGlass: 'rgba(255, 245, 255, 0.6)',
-      bgGlassHover: 'rgba(255, 245, 255, 0.8)',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.06)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.1)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.12)',
       accent: '#FF00F4',
       accentHover: '#ff40f6',
       accentGlow: 'rgba(255, 0, 244, 0.2)',
@@ -649,7 +554,6 @@ export const THEMES = [
       warning: '#FF7400',
       error: '#dc2626',
       info: '#3b82f6',
-      blur: '24px',
     },
   },
   {
@@ -657,13 +561,10 @@ export const THEMES = [
     label: 'Lemonade',
     type: 'light',
     colors: {
-      bgPrimary: '#ffffff',
-      bgSecondary: 'rgba(248, 255, 240, 0.7)',
-      bgTertiary: 'rgba(235, 248, 220, 0.5)',
-      bgGlass: 'rgba(250, 255, 245, 0.6)',
-      bgGlassHover: 'rgba(250, 255, 245, 0.8)',
+      bgPrimary: '#fbfff5',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.06)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.1)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.12)',
       accent: '#519903',
       accentHover: '#65b310',
       accentGlow: 'rgba(81, 153, 3, 0.2)',
@@ -674,7 +575,6 @@ export const THEMES = [
       warning: '#E9E92E',
       error: '#dc2626',
       info: '#3b82f6',
-      blur: '24px',
     },
   },
   {
@@ -683,12 +583,9 @@ export const THEMES = [
     type: 'dark',
     colors: {
       bgPrimary: '#0f1729',
-      bgSecondary: 'rgba(18, 28, 50, 0.7)',
-      bgTertiary: 'rgba(25, 38, 65, 0.5)',
-      bgGlass: 'rgba(20, 30, 55, 0.4)',
-      bgGlassHover: 'rgba(30, 42, 70, 0.5)',
+      surfaceTint: 'white',
       borderGlass: 'rgba(255, 255, 255, 0.08)',
-      borderGlassStrong: 'rgba(255, 255, 255, 0.12)',
+      borderGlassStrong: 'rgba(255, 255, 255, 0.14)',
       accent: '#38bdf8',
       accentHover: '#60ccfa',
       accentGlow: 'rgba(56, 189, 248, 0.3)',
@@ -699,7 +596,6 @@ export const THEMES = [
       warning: '#fbbf24',
       error: '#ef4444',
       info: '#818cf8',
-      blur: '28px',
     },
   },
   {
@@ -707,13 +603,10 @@ export const THEMES = [
     label: 'Winter',
     type: 'light',
     colors: {
-      bgPrimary: '#ffffff',
-      bgSecondary: 'rgba(240, 245, 255, 0.7)',
-      bgTertiary: 'rgba(225, 235, 250, 0.5)',
-      bgGlass: 'rgba(245, 248, 255, 0.6)',
-      bgGlassHover: 'rgba(245, 248, 255, 0.8)',
+      bgPrimary: '#f6f9ff',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.06)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.1)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.12)',
       accent: '#047AFF',
       accentHover: '#2890ff',
       accentGlow: 'rgba(4, 122, 255, 0.2)',
@@ -724,7 +617,6 @@ export const THEMES = [
       warning: '#f59e0b',
       error: '#dc2626',
       info: '#047AFF',
-      blur: '24px',
     },
   },
   {
@@ -733,12 +625,9 @@ export const THEMES = [
     type: 'dark',
     colors: {
       bgPrimary: '#2A303C',
-      bgSecondary: 'rgba(42, 48, 60, 0.7)',
-      bgTertiary: 'rgba(55, 62, 78, 0.5)',
-      bgGlass: 'rgba(46, 52, 66, 0.4)',
-      bgGlassHover: 'rgba(58, 65, 80, 0.5)',
+      surfaceTint: 'white',
       borderGlass: 'rgba(255, 255, 255, 0.08)',
-      borderGlassStrong: 'rgba(255, 255, 255, 0.12)',
+      borderGlassStrong: 'rgba(255, 255, 255, 0.14)',
       accent: '#9FE88D',
       accentHover: '#b5f0a5',
       accentGlow: 'rgba(159, 232, 141, 0.25)',
@@ -749,7 +638,6 @@ export const THEMES = [
       warning: '#fbbf24',
       error: '#ef4444',
       info: '#818cf8',
-      blur: '28px',
     },
   },
   {
@@ -758,12 +646,9 @@ export const THEMES = [
     type: 'light',
     colors: {
       bgPrimary: '#eceff4',
-      bgSecondary: 'rgba(236, 239, 244, 0.7)',
-      bgTertiary: 'rgba(216, 222, 233, 0.5)',
-      bgGlass: 'rgba(240, 242, 246, 0.6)',
-      bgGlassHover: 'rgba(240, 242, 246, 0.8)',
+      surfaceTint: 'black',
       borderGlass: 'rgba(0, 0, 0, 0.06)',
-      borderGlassStrong: 'rgba(0, 0, 0, 0.1)',
+      borderGlassStrong: 'rgba(0, 0, 0, 0.12)',
       accent: '#5E81AC',
       accentHover: '#7694b8',
       accentGlow: 'rgba(94, 129, 172, 0.25)',
@@ -774,7 +659,6 @@ export const THEMES = [
       warning: '#EBCB8B',
       error: '#BF616A',
       info: '#88C0D0',
-      blur: '24px',
     },
   },
   {
@@ -783,12 +667,9 @@ export const THEMES = [
     type: 'dark',
     colors: {
       bgPrimary: '#121c22',
-      bgSecondary: 'rgba(20, 30, 38, 0.7)',
-      bgTertiary: 'rgba(30, 42, 52, 0.5)',
-      bgGlass: 'rgba(24, 34, 44, 0.4)',
-      bgGlassHover: 'rgba(35, 48, 58, 0.5)',
+      surfaceTint: 'white',
       borderGlass: 'rgba(255, 255, 255, 0.08)',
-      borderGlassStrong: 'rgba(255, 255, 255, 0.12)',
+      borderGlassStrong: 'rgba(255, 255, 255, 0.14)',
       accent: '#FF865B',
       accentHover: '#ffa080',
       accentGlow: 'rgba(255, 134, 91, 0.3)',
@@ -799,17 +680,13 @@ export const THEMES = [
       warning: '#fbbf24',
       error: '#ef4444',
       info: '#926de6',
-      blur: '28px',
     },
   },
 ];
 
 const VAR_MAP = {
   bgPrimary: '--bg-primary',
-  bgSecondary: '--bg-secondary',
-  bgTertiary: '--bg-tertiary',
-  bgGlass: '--bg-glass',
-  bgGlassHover: '--bg-glass-hover',
+  surfaceTint: '--surface-tint',
   borderGlass: '--border-glass',
   borderGlassStrong: '--border-glass-strong',
   accent: '--accent',
@@ -822,16 +699,20 @@ const VAR_MAP = {
   warning: '--warning',
   error: '--error',
   info: '--info',
-  blur: '--blur',
 };
+
+// Vars that are no longer set by themes (computed in CSS instead).
+// We strip them on theme switch in case a previous version inlined them.
+const STALE_VARS = ['--bg-secondary', '--bg-tertiary', '--bg-glass', '--bg-glass-hover', '--blur'];
 
 export function applyTheme(themeName) {
   const style = document.documentElement.style;
 
+  // Always clear stale vars first so old inline values don't leak between switches
+  STALE_VARS.forEach((v) => style.removeProperty(v));
+
   if (themeName === 'jarvis') {
-    // Clear all inline vars — fall back to :root definitions
     Object.values(VAR_MAP).forEach((v) => style.removeProperty(v));
-    // Dark theme → dark background
     document.body.style.backgroundImage = "url('/background.png')";
     return;
   }
@@ -844,7 +725,6 @@ export function applyTheme(themeName) {
     if (cssVar) style.setProperty(cssVar, value);
   });
 
-  // Switch background image based on theme type
   document.body.style.backgroundImage =
     theme.type === 'light'
       ? "url('/background-white.png')"
