@@ -168,6 +168,23 @@ function ExpensesPage() {
     setSelectedIds(new Set(filteredExpenses.map((e) => e.id)));
   };
 
+  // Long-press on a card enters select mode and pre-selects that card
+  const handleLongPress = (id) => {
+    if (!selectMode) {
+      setSelectMode(true);
+      setSelectedIds(new Set([id]));
+    } else {
+      toggleSelected(id);
+    }
+  };
+
+  // Tap anywhere on the page that isn't a card or the select bar exits select mode
+  const handlePageClick = (e) => {
+    if (!selectMode) return;
+    if (e.target.closest('.expense-card, .select-actions')) return;
+    exitSelectMode();
+  };
+
   const handleDeleteSelected = async () => {
     if (selectedIds.size === 0) return;
     const count = selectedIds.size;
@@ -323,7 +340,12 @@ function ExpensesPage() {
   }
 
   return (
-    <div className="expenses-page" onTouchStart={expensesSwipe.onTouchStart} onTouchEnd={expensesSwipe.onTouchEnd}>
+    <div
+      className={`expenses-page${selectMode ? ' select-mode' : ''}`}
+      onTouchStart={expensesSwipe.onTouchStart}
+      onTouchEnd={expensesSwipe.onTouchEnd}
+      onClick={handlePageClick}
+    >
       {/* Header with inline view toggle (or select-mode action bar) */}
       <div className="expenses-header">
         <div className="expenses-header-left">
@@ -333,9 +355,6 @@ function ExpensesPage() {
         <div className="expenses-header-right">
           {selectMode ? (
             <div className="select-actions">
-              <button className="select-cancel-btn" onClick={exitSelectMode}>
-                Cancel
-              </button>
               <span className="select-count">
                 {selectedIds.size} selected
               </span>
@@ -372,15 +391,6 @@ function ExpensesPage() {
                   : `${filteredExpenses.length} expense${filteredExpenses.length !== 1 ? 's' : ''}`
                 }
               </span>
-              {view === 'list' && filteredExpenses.length > 0 && (
-                <button
-                  className="select-toggle-btn"
-                  onClick={enterSelectMode}
-                  aria-label="Select expenses"
-                >
-                  Select
-                </button>
-              )}
               <div className="view-toggle">
                 <button
                   className={`view-toggle-btn ${view === 'list' ? 'active' : ''}`}
@@ -467,6 +477,7 @@ function ExpensesPage() {
                   selectMode={selectMode}
                   selected={selectedIds.has(expense.id)}
                   onToggleSelect={toggleSelected}
+                  onLongPress={handleLongPress}
                 />
               ))
             )}

@@ -191,28 +191,15 @@ function ExpensesDashboard({ expenses, categories, hidePeriodFilter = false }) {
     return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
   };
 
-  if (filteredExpenses.length === 0) {
-    return (
-      <div className="dashboard-container">
-        {!hidePeriodFilter && (
-          <div className="period-filter-bar">
-            {PERIODS.map(p => (
-              <button
-                key={p.key}
-                className={`period-pill ${period === p.key ? 'active' : ''}`}
-                onClick={() => setPeriod(p.key)}
-              >
-                {p.label}
-              </button>
-            ))}
-          </div>
-        )}
-        <div className="dashboard-empty">
-          <p>{hidePeriodFilter ? 'No expenses in this folder' : 'No expenses for this period'}</p>
-        </div>
-      </div>
-    );
-  }
+  // When there's no data, render a single muted placeholder slice so the
+  // donut keeps its shape instead of disappearing.
+  const isEmpty = total === 0;
+  const donutChartData = isEmpty
+    ? [{ id: '_empty', label: 'No data', value: 1, color: 'rgba(255, 255, 255, 0.05)' }]
+    : donutData;
+
+  // Pie expects positive values; with no data we still want to draw the ring.
+  const showLegend = !isEmpty && donutData.length > 0;
 
   return (
     <div className="dashboard-container">
@@ -241,15 +228,16 @@ function ExpensesDashboard({ expenses, categories, hidePeriodFilter = false }) {
         </div>
         <div className="donut-chart-container">
           <ResponsivePie
-            data={donutData}
+            data={donutChartData}
             colors={d => d.data.color}
             margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
             innerRadius={0.62}
-            padAngle={2}
-            cornerRadius={4}
-            activeOuterRadiusOffset={4}
+            padAngle={isEmpty ? 0 : 2}
+            cornerRadius={isEmpty ? 0 : 4}
+            activeOuterRadiusOffset={isEmpty ? 0 : 4}
             enableArcLabels={false}
             enableArcLinkLabels={false}
+            isInteractive={!isEmpty}
             theme={NIVO_THEME}
             tooltip={({ datum }) => (
               <div style={NIVO_THEME.tooltip.container}>
@@ -265,15 +253,17 @@ function ExpensesDashboard({ expenses, categories, hidePeriodFilter = false }) {
             ]}
           />
         </div>
-        <div className="donut-legend">
-          {donutData.map(d => (
-            <div key={d.id} className="donut-legend-item">
-              <span className="donut-legend-dot" style={{ background: d.color }} />
-              <span className="donut-legend-label">{d.label}</span>
-              <span className="donut-legend-value">{d.value.toFixed(2)}</span>
-            </div>
-          ))}
-        </div>
+        {showLegend && (
+          <div className="donut-legend">
+            {donutData.map(d => (
+              <div key={d.id} className="donut-legend-item">
+                <span className="donut-legend-dot" style={{ background: d.color }} />
+                <span className="donut-legend-label">{d.label}</span>
+                <span className="donut-legend-value">{d.value.toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Daily bar chart */}
@@ -281,7 +271,7 @@ function ExpensesDashboard({ expenses, categories, hidePeriodFilter = false }) {
         <div className="dashboard-card-header">
           <span className="dashboard-card-title">Daily Spend</span>
           <span className="dashboard-card-subtitle">
-            Avg {(total / barData.length).toFixed(1)}/day
+            Avg {barData.length > 0 ? (total / barData.length).toFixed(1) : '0.0'}/day
           </span>
         </div>
         <div className="bar-chart-container">
@@ -296,6 +286,8 @@ function ExpensesDashboard({ expenses, categories, hidePeriodFilter = false }) {
             enableLabel={false}
             enableGridX={false}
             gridYValues={3}
+            minValue={0}
+            maxValue={isEmpty ? 10 : 'auto'}
             theme={NIVO_THEME}
             axisBottom={{
               tickValues: barTickValues,
